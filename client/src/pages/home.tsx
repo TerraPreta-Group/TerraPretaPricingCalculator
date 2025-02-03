@@ -21,11 +21,30 @@ import {
 export default function Home() {
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
+  const [length, setLength] = useState<string>("");
+  const [width, setWidth] = useState<string>("");
+  const [customArea, setCustomArea] = useState<string>("");
+  const [customUnit, setCustomUnit] = useState<UnitType>("acre");
 
   const handleAreaChange = (value: string) => {
     // Only allow numbers and decimal points
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setArea(value);
+    }
+  };
+
+  const handleNumericInput = (value: string, setter: (value: string) => void) => {
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setter(value);
+      if (setter === setLength || setter === setWidth) {
+        const newArea = value === "" || width === "" || length === "" 
+          ? ""
+          : (parseFloat(value) * (setter === setLength ? parseFloat(width) : parseFloat(length))).toString();
+        setCustomArea(newArea);
+        // When custom area is updated, also update the main area
+        setArea(newArea);
+        setUnit(customUnit);
+      }
     }
   };
 
@@ -56,6 +75,52 @@ export default function Home() {
                   className="w-[120px]"
                 />
                 <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sqft">Square Feet</SelectItem>
+                    <SelectItem value="sqm">Square Meters</SelectItem>
+                    <SelectItem value="acre">Acres</SelectItem>
+                    <SelectItem value="ha">Hectares</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Custom Area Calculator */}
+          <div className="space-y-4">
+            <div className="text-center">
+              <Label className="block mb-2">Custom Area Calculator</Label>
+              <div className="flex items-center gap-4 justify-center">
+                <Input
+                  type="text"
+                  value={length}
+                  onChange={(e) => handleNumericInput(e.target.value, setLength)}
+                  placeholder="Length"
+                  className="w-[100px]"
+                />
+                <span className="text-lg font-bold">×</span>
+                <Input
+                  type="text"
+                  value={width}
+                  onChange={(e) => handleNumericInput(e.target.value, setWidth)}
+                  placeholder="Width"
+                  className="w-[100px]"
+                />
+                <span className="text-lg font-bold">=</span>
+                <Input
+                  type="text"
+                  value={customArea}
+                  readOnly
+                  placeholder="Area"
+                  className="w-[100px] bg-muted"
+                />
+                <Select value={customUnit} onValueChange={(value) => {
+                  setCustomUnit(value as UnitType);
+                  setUnit(value as UnitType);
+                }}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue placeholder="Select unit" />
                   </SelectTrigger>
