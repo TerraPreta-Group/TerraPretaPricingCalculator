@@ -21,7 +21,8 @@ import {
 } from "@/lib/calculator";
 
 const calculateToteBags = (requiredProduct: number): number => {
-  return Math.ceil(requiredProduct / 1000);
+  // Round up to the nearest 1000 lb interval
+  return Math.ceil(requiredProduct / 1000) *1000;
 };
 
 export default function Home() {
