@@ -42,6 +42,14 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
         body: response?.body,
         headers: response?.headers
       });
+
+      // Check for specific SendGrid errors
+      const errorBody = response?.body;
+      if (errorBody?.errors?.[0]?.message?.includes('sender')) {
+        console.error('SendGrid error: Sender verification required. Please verify your sender email in SendGrid dashboard.');
+      } else if (errorBody?.errors?.[0]?.message?.includes('permission')) {
+        console.error('SendGrid error: API key permissions issue. Please ensure the API key has "Mail Send" permissions.');
+      }
     } else {
       console.error('SendGrid error:', error);
     }
