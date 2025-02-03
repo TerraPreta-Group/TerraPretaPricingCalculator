@@ -17,8 +17,8 @@ const baseContactFormSchema = z.object({
 // Order-specific schema
 const orderSchema = baseContactFormSchema.extend({
   type: z.literal("order"),
-  product: z.string(),
-  cost: z.string(),
+  product: z.string().optional(),
+  cost: z.string().optional(),
 });
 
 // Call-specific schema
@@ -37,7 +37,7 @@ export function registerRoutes(app: Express): Server {
       const formData = contactFormSchema.parse(req.body);
 
       // Prepare email data based on request type
-      const emailData = formData.type === "order" 
+      const emailData = formData.type === "order"
         ? formatOrderEmail(formData)
         : formatCallEmail(formData);
 
@@ -57,7 +57,7 @@ export function registerRoutes(app: Express): Server {
       res.json({ message: "Form submitted successfully" });
     } catch (error) {
       console.error("Form submission error:", error);
-      res.status(400).json({ 
+      res.status(400).json({
         message: "Invalid form data",
         error: error instanceof Error ? error.message : "Unknown error"
       });
