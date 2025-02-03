@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import {
   convertToAcres,
@@ -16,8 +17,6 @@ import {
   formatNumber,
   type UnitType,
 } from "@/lib/calculator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
 
 export default function Home() {
   const [area, setArea] = useState<string>("");
@@ -43,6 +42,7 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Area Input Section */}
           <div className="space-y-4">
             <Label htmlFor="area">Area</Label>
             <div className="flex gap-4">
@@ -52,47 +52,47 @@ export default function Home() {
                 value={area}
                 onChange={(e) => handleAreaChange(e.target.value)}
                 placeholder="Enter area..."
-                className="flex-1"
+                className="w-[120px]"
               />
               <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
-                <SelectTrigger className="w-[100px]">
-                  <SelectValue placeholder="Unit" />
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sqft">sq ft</SelectItem>
-                  <SelectItem value="sqm">m²</SelectItem>
-                  <SelectItem value="acre">acres</SelectItem>
-                  <SelectItem value="ha">ha</SelectItem>
+                  <SelectItem value="sqft">Square Feet</SelectItem>
+                  <SelectItem value="sqm">Square Meters</SelectItem>
+                  <SelectItem value="acre">Acres</SelectItem>
+                  <SelectItem value="ha">Hectares</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Info className="h-4 w-4" />
-              <span>All calculations are converted to acres automatically</span>
-            </div>
           </div>
 
-          <div className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-muted-foreground">Required Product</Label>
-                <p className="text-2xl font-semibold">
-                  {formatNumber(requiredProduct)} lbs
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-muted-foreground">Total Cost</Label>
-                <p className="text-2xl font-semibold">
-                  ${formatNumber(totalCost)}
-                </p>
-              </div>
-            </div>
+          {/* Rates and Results Table */}
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Application Rate</TableCell>
+                <TableCell>1,500 lbs/acre</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Product Cost</TableCell>
+                <TableCell>$1.75/lb</TableCell>
+              </TableRow>
+              <TableRow className="bg-muted/50">
+                <TableCell className="font-medium">Required Product</TableCell>
+                <TableCell>{formatNumber(requiredProduct)} lbs</TableCell>
+              </TableRow>
+              <TableRow className="bg-muted/50">
+                <TableCell className="font-medium">Total Cost</TableCell>
+                <TableCell>${formatNumber(totalCost)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
 
-            <div className="text-sm text-muted-foreground">
-              <p>Application Rate: 1,500 lbs/acre</p>
-              <p>Product Cost: $1.75/lb</p>
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground text-center">
+            All calculations are automatically converted to acres
+          </p>
         </CardContent>
       </Card>
     </div>
