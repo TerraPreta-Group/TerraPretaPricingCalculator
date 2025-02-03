@@ -44,23 +44,19 @@ export default function Home() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="area">Area</Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Enter the field area to calculate product needs</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+            <Label htmlFor="area">Area</Label>
+            <div className="flex gap-4">
+              <Input
+                id="area"
+                type="text"
+                value={area}
+                onChange={(e) => handleAreaChange(e.target.value)}
+                placeholder="Enter area..."
+                className="flex-1"
+              />
               <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="Select unit" />
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue placeholder="Unit" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sqft">sq ft</SelectItem>
@@ -70,13 +66,10 @@ export default function Home() {
                 </SelectContent>
               </Select>
             </div>
-            <Input
-              id="area"
-              type="text"
-              value={area}
-              onChange={(e) => handleAreaChange(e.target.value)}
-              placeholder="Enter area..."
-            />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Info className="h-4 w-4" />
+              <span>All calculations are converted to acres automatically</span>
+            </div>
           </div>
 
           <div className="space-y-4 pt-4">
