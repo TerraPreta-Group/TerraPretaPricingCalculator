@@ -50,6 +50,7 @@ export function formatOrderEmail(formData: any) {
   `;
 
   return {
+    to: NOTIFICATION_EMAIL,
     subject: `New Pellet Order - ${formData.company}`,
     text: `New order request from ${formData.name} at ${formData.company}. Product: ${formData.product} lbs, Cost: $${formData.cost}. Contact: ${formData.phone}, ${formData.email}`,
     html,
@@ -70,6 +71,7 @@ export function formatCallEmail(formData: any) {
   `;
 
   return {
+    to: NOTIFICATION_EMAIL,
     subject: `Call Request - ${formData.company}`,
     text: `New call request from ${formData.name} at ${formData.company}. Contact: ${formData.phone}, ${formData.email}`,
     html,
