@@ -41,11 +41,8 @@ export function registerRoutes(app: Express): Server {
         ? formatOrderEmail(formData)
         : formatCallEmail(formData);
 
-      // Send email notification
-      const emailSent = await sendEmail({
-        to: process.env.SMTP_FROM_EMAIL!, // Using from email as recipient
-        ...emailData
-      });
+      // Send email notification using SendGrid
+      const emailSent = await sendEmail(emailData);
 
       if (!emailSent) {
         throw new Error("Failed to send email notification");

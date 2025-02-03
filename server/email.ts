@@ -10,11 +10,16 @@ interface EmailData {
   html?: string;
 }
 
+// In this application, all form submissions are sent as notifications
+// to a single email address (SMTP_FROM_EMAIL), which serves as both
+// the sender and recipient of these notification emails
+const NOTIFICATION_EMAIL = process.env.SMTP_FROM_EMAIL!;
+
 export async function sendEmail(emailData: EmailData): Promise<boolean> {
   try {
     await mailService.send({
-      to: emailData.to,
-      from: process.env.SMTP_FROM_EMAIL!, // Using this as sender email
+      to: NOTIFICATION_EMAIL, // All notifications go to this email
+      from: NOTIFICATION_EMAIL, // SendGrid requires verified sender
       subject: emailData.subject,
       text: emailData.text,
       html: emailData.html,
