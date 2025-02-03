@@ -70,14 +70,14 @@ export function formatOrderEmail(formData: any): EmailData {
     </ul>
     <p><strong>Order Details:</strong></p>
     <ul>
-      <li>Product Amount: ${formData.product} lbs</li>
-      <li>Total Cost: $${formData.cost}</li>
+      <li>Product Amount: ${formData.product || 'Not specified'} lbs</li>
+      <li>Total Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}</li>
     </ul>
   `;
 
   return {
     subject: `New Pellet Order - ${formData.company}`,
-    text: `New order request from ${formData.name} at ${formData.company}. Product: ${formData.product} lbs, Cost: $${formData.cost}. Contact: ${formData.phone}, ${formData.email}`,
+    text: `New order request from ${formData.name} at ${formData.company}. Product: ${formData.product || 'Not specified'} lbs, Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}. Contact: ${formData.phone}, ${formData.email}`,
     html,
   };
 }
