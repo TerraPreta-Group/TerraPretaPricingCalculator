@@ -1,19 +1,7 @@
-import nodemailer from 'nodemailer';
+import { MailService } from '@sendgrid/mail';
 
-// Create reusable transporter with proper SSL/TLS settings
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USERNAME,
-    pass: process.env.SMTP_PASSWORD,
-  },
-  tls: {
-    // Do not fail on invalid certs
-    rejectUnauthorized: false
-  }
-});
+const mailService = new MailService();
+mailService.setApiKey(process.env.SENDGRID_API_KEY!);
 
 interface EmailData {
   to: string;
@@ -24,13 +12,16 @@ interface EmailData {
 
 export async function sendEmail(emailData: EmailData): Promise<boolean> {
   try {
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM_EMAIL,
-      ...emailData,
+    await mailService.send({
+      to: emailData.to,
+      from: process.env.SMTP_FROM_EMAIL!, // Using this as sender email
+      subject: emailData.subject,
+      text: emailData.text,
+      html: emailData.html,
     });
     return true;
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('SendGrid email error:', error);
     return false;
   }
 }
