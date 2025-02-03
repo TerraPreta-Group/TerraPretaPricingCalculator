@@ -20,6 +20,10 @@ import {
   type UnitType,
 } from "@/lib/calculator";
 
+const calculateToteBags = (requiredProduct: number): number => {
+  return Math.ceil(requiredProduct / 2000);
+};
+
 export default function Home() {
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
@@ -38,7 +42,7 @@ export default function Home() {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setter(value);
       if (setter === setLength || setter === setWidth) {
-        const newArea = value === "" || width === "" || length === "" 
+        const newArea = value === "" || width === "" || length === ""
           ? ""
           : (parseFloat(value) * (setter === setLength ? parseFloat(width) : parseFloat(length))).toString();
         setCustomArea(newArea);
@@ -51,6 +55,7 @@ export default function Home() {
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
   const totalCost = calculateCost(requiredProduct);
+  const toteBags = calculateToteBags(requiredProduct);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
@@ -149,6 +154,10 @@ export default function Home() {
               <TableRow className="bg-muted/50">
                 <TableCell className="font-medium">Required Product</TableCell>
                 <TableCell>{formatNumber(requiredProduct)} lbs</TableCell>
+              </TableRow>
+              <TableRow className="bg-muted/50">
+                <TableCell className="font-medium">Tote Bags Required</TableCell>
+                <TableCell>{toteBags} bags (2,000 lbs each)</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
                 <TableCell className="font-medium">Total Cost</TableCell>

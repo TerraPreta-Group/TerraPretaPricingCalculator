@@ -6,6 +6,7 @@ const CONVERSION_RATES = {
 
 const APPLICATION_RATE = 1500; // lb/ac
 const PRICE_PER_LB = 1.75; // $/lb
+const TOTE_BAG_CAPACITY = 2000; // lbs per tote bag
 
 export type UnitType = "sqft" | "sqm" | "acre" | "ha";
 
@@ -23,6 +24,10 @@ export function calculateRequiredProduct(acres: number): number {
 
 export function calculateCost(lbs: number): number {
   return lbs * PRICE_PER_LB;
+}
+
+export function calculateToteBags(lbs: number): number {
+  return Math.ceil(lbs / TOTE_BAG_CAPACITY);
 }
 
 export function formatNumber(num: number): string {
