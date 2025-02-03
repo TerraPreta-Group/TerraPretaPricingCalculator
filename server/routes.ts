@@ -1,3 +1,4 @@
+import { sendEmail, formatOrderEmail, formatCallEmail } from "./email";
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -20,10 +21,26 @@ export function registerRoutes(app: Express): Server {
     try {
       const formData = contactFormSchema.parse(req.body);
 
-      // For now, just log the submission
-      console.log("Form submission received:", formData);
+      // Prepare email data based on request type
+      const emailData = formData.type === "order" 
+        ? formatOrderEmail(formData)
+        : formatCallEmail(formData);
 
-      // TODO: Add email sending logic here when email service is configured
+      // Send email notification
+      const emailSent = await sendEmail({
+        to: process.env.SMTP_FROM_EMAIL!, // Using from email as recipient
+        ...emailData
+      });
+
+      if (!emailSent) {
+        throw new Error("Failed to send email notification");
+      }
+
+      console.log(`${formData.type} request submitted:`, {
+        name: formData.name,
+        company: formData.company,
+        type: formData.type
+      });
 
       res.json({ message: "Form submitted successfully" });
     } catch (error) {
