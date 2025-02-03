@@ -6,7 +6,7 @@ const CONVERSION_RATES = {
 
 const APPLICATION_RATE = 1500; // lb/ac
 const PRICE_PER_LB = 1.75; // $/lb
-const TOTE_BAG_CAPACITY = 2000; // lbs per tote bag
+const TOTE_BAG_CAPACITY = 1000; // lbs per tote bag
 
 export type UnitType = "sqft" | "sqm" | "acre" | "ha";
 
