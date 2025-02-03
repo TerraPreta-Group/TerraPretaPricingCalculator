@@ -159,9 +159,9 @@ export default function Home() {
                 <TableCell className="font-medium">Tote Bags Required</TableCell>
                 <TableCell>{toteBags} bags (2,000 lbs each)</TableCell>
               </TableRow>
-              <TableRow className="bg-muted/50">
-                <TableCell className="font-medium">Total Cost</TableCell>
-                <TableCell>${formatNumber(totalCost)}</TableCell>
+              <TableRow className="bg-primary/10 py-2">
+                <TableCell className="font-bold text-lg">Total Cost</TableCell>
+                <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -174,7 +174,7 @@ export default function Home() {
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button variant="outline">
+              <Button className="bg-primary hover:bg-primary/90">
                 Schedule a Call
               </Button>
             </Link>
