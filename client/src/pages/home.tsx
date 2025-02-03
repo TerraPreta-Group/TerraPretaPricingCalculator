@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import {
   Select,
   SelectContent,
@@ -27,7 +29,6 @@ export default function Home() {
   const [customUnit, setCustomUnit] = useState<UnitType>("acre");
 
   const handleAreaChange = (value: string) => {
-    // Only allow numbers and decimal points
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setArea(value);
     }
@@ -41,7 +42,6 @@ export default function Home() {
           ? ""
           : (parseFloat(value) * (setter === setLength ? parseFloat(width) : parseFloat(length))).toString();
         setCustomArea(newArea);
-        // When custom area is updated, also update the main area
         setArea(newArea);
         setUnit(customUnit);
       }
@@ -156,6 +156,20 @@ export default function Home() {
               </TableRow>
             </TableBody>
           </Table>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 justify-center pt-4">
+            <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}`}>
+              <Button className="bg-primary hover:bg-primary/90">
+                Complete Order
+              </Button>
+            </Link>
+            <Link href="/contact?type=call">
+              <Button variant="outline">
+                Schedule a Call
+              </Button>
+            </Link>
+          </div>
 
           <p className="text-xs text-muted-foreground text-center">
             All calculations are automatically converted to acres
