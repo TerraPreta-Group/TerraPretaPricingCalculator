@@ -29,25 +29,28 @@ export default function Contact() {
   // Get query parameters
   const params = new URLSearchParams(window.location.search);
   const isOrder = params.get("type") === "order";
-  const product = params.get("product");
-  const cost = params.get("cost");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // Only include product and cost for order requests
+      const submitData = {
+        ...formData,
+        type: isOrder ? "order" : "call",
+        ...(isOrder ? {
+          product: params.get("product"),
+          cost: params.get("cost")
+        } : {})
+      };
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          type: isOrder ? "order" : "call",
-          product,
-          cost,
-        }),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
