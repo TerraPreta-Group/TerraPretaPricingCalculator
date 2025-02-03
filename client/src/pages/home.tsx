@@ -174,7 +174,7 @@ export default function Home() {
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 Schedule a Call
               </Button>
             </Link>
