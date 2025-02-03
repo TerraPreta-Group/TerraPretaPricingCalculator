@@ -38,33 +38,35 @@ export default function Home() {
       <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Agricultural Product Calculator
+            Pellet Pricing Calculator
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Area Input Section */}
           <div className="space-y-4">
-            <Label htmlFor="area">Area</Label>
-            <div className="flex gap-4">
-              <Input
-                id="area"
-                type="text"
-                value={area}
-                onChange={(e) => handleAreaChange(e.target.value)}
-                placeholder="Enter area..."
-                className="w-[120px]"
-              />
-              <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Select unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="sqft">Square Feet</SelectItem>
-                  <SelectItem value="sqm">Square Meters</SelectItem>
-                  <SelectItem value="acre">Acres</SelectItem>
-                  <SelectItem value="ha">Hectares</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="text-center">
+              <Label htmlFor="area" className="block mb-2">Area</Label>
+              <div className="flex gap-4 justify-center">
+                <Input
+                  id="area"
+                  type="text"
+                  value={area}
+                  onChange={(e) => handleAreaChange(e.target.value)}
+                  placeholder="Enter area..."
+                  className="w-[120px]"
+                />
+                <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sqft">Square Feet</SelectItem>
+                    <SelectItem value="sqm">Square Meters</SelectItem>
+                    <SelectItem value="acre">Acres</SelectItem>
+                    <SelectItem value="ha">Hectares</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
