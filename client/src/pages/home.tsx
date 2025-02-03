@@ -22,7 +22,7 @@ import {
 
 const calculateToteBags = (requiredProduct: number): number => {
   // Round up to the nearest 1000 lb interval
-  return Math.ceil(requiredProduct / 1000) *1000;
+  return Math.ceil(requiredProduct / 1000);
 };
 
 export default function Home() {
@@ -158,7 +158,7 @@ export default function Home() {
               </TableRow>
               <TableRow className="bg-muted/50">
                 <TableCell className="font-medium">Tote Bags Required</TableCell>
-                <TableCell>{toteBags} bags (1,000 lbs each)</TableCell>
+                <TableCell>{toteBags} bags ({Math.ceil(requiredProduct / 1000) * 1000} lbs each)</TableCell>
               </TableRow>
               <TableRow className="bg-primary/10 py-2">
                 <TableCell className="font-bold text-lg">Total Cost</TableCell>
