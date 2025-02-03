@@ -4,17 +4,32 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 
-// Validation schema for contact form
-const contactFormSchema = z.object({
+// Base schema for common fields
+const baseContactFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email format"),
   company: z.string().min(1, "Company name is required"),
   address: z.string().min(1, "Address is required"),
   type: z.enum(["order", "call"]),
+});
+
+// Order-specific schema
+const orderSchema = baseContactFormSchema.extend({
+  type: z.literal("order"),
+  product: z.string(),
+  cost: z.string(),
+});
+
+// Call-specific schema
+const callSchema = baseContactFormSchema.extend({
+  type: z.literal("call"),
   product: z.string().optional(),
   cost: z.string().optional(),
 });
+
+// Combined schema using discriminated union
+const contactFormSchema = z.discriminatedUnion("type", [orderSchema, callSchema]);
 
 export function registerRoutes(app: Express): Server {
   app.post("/api/contact", async (req: Request, res: Response) => {
