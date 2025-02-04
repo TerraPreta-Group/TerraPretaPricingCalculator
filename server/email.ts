@@ -88,26 +88,37 @@ export function formatOrderEmail(formData: any): EmailData {
 
 export function formatCallEmail(formData: any): EmailData {
   const html = `
-    <h2>New Call Request</h2>
-    <p><strong>Contact Information:</strong></p>
-    <ul>
-      <li>Full Name: ${formData.name}</li>
-      <li>Phone Number: ${formData.phone}</li>
-      <li>Email: ${formData.email}</li>
-      <li>Company Name: ${formData.company}</li>
-      <li>Street Address: ${formData.street}</li>
-      <li>City: ${formData.city}</li>
-      <li>Province: ${formData.province}</li>
-      <li>Postal Code: ${formData.postalCode}</li>
-      <li>Reason for Call: ${
-        formData.reason === 'pricing' ? 'Did Justin Trudeau set your prices?' :
-        formData.reason === 'impress' ? 'I need more info to impress my boss' :
-        formData.reason === 'commitment' ? 'I like it, I just have commitment issues' :
-        formData.reason === 'human' ? 'I just want to talk to a human' :
-        'Not specified'
-      }</li>
-      <li>Additional Message: ${formData.message || 'No message provided'}</li>
-    </ul>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">New Call Request</h2>
+      
+      <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
+        <h3 style="color: #444; margin-top: 0;">Primary Contact Details</h3>
+        <p><strong>Full Name:</strong> ${formData.name}</p>
+        <p><strong>Phone Number:</strong> ${formData.phone}</p>
+        <p><strong>Email:</strong> ${formData.email}</p>
+        <p><strong>Company Name:</strong> ${formData.company}</p>
+      </div>
+
+      <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
+        <h3 style="color: #444; margin-top: 0;">Address Information</h3>
+        <p><strong>Street Address:</strong> ${formData.street}</p>
+        <p><strong>City:</strong> ${formData.city}</p>
+        <p><strong>Province:</strong> ${formData.province}</p>
+        <p><strong>Postal Code:</strong> ${formData.postalCode}</p>
+      </div>
+
+      <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
+        <h3 style="color: #444; margin-top: 0;">Request Details</h3>
+        <p><strong>Reason for Call:</strong> ${
+          formData.reason === 'pricing' ? 'Did Justin Trudeau set your prices?' :
+          formData.reason === 'impress' ? 'I need more info to impress my boss' :
+          formData.reason === 'commitment' ? 'I like it, I just have commitment issues' :
+          formData.reason === 'human' ? 'I just want to talk to a human' :
+          'Not specified'
+        }</p>
+        <p><strong>Additional Message:</strong> ${formData.message || 'No message provided'}</p>
+      </div>
+    </div>
   `;
 
   return {
