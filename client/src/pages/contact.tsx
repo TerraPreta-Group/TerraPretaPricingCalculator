@@ -26,6 +26,9 @@ interface ContactFormData {
 export default function Contact() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const params = new URLSearchParams(window.location.search);
+  const isOrder = params.get("type") === "order";
+  
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     phone: "",
@@ -37,16 +40,12 @@ export default function Contact() {
     postalCode: "",
     reason: "",
     message: "",
-    originalArea: "",
-    originalUnit: "",
-    acres: "",
+    originalArea: params.get("originalArea") || "",
+    originalUnit: params.get("originalUnit") || "",
+    acres: params.get("acres") || ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get query parameters
-  const params = new URLSearchParams(window.location.search);
-  const isOrder = params.get("type") === "order";
-  
   useEffect(() => {
     if (isOrder) {
       const originalArea = params.get("originalArea");
