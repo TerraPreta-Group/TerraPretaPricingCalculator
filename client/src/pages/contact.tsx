@@ -47,17 +47,24 @@ export default function Contact() {
   const params = new URLSearchParams(window.location.search);
   const isOrder = params.get("type") === "order";
   
-  // Initialize area values from URL parameters
   useEffect(() => {
     if (isOrder) {
+      const originalArea = params.get("originalArea");
+      const originalUnit = params.get("originalUnit");
+      const acres = params.get("acres");
+      const product = params.get("product");
+      const cost = params.get("cost");
+      
       setFormData(prev => ({
         ...prev,
-        originalArea: params.get("originalArea") || "",
-        originalUnit: params.get("originalUnit") || "",
-        acres: params.get("acres") || ""
+        originalArea,
+        originalUnit,
+        acres,
+        product,
+        cost
       }));
     }
-  }, [isOrder]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
