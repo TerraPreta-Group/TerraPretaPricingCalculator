@@ -169,7 +169,7 @@ export default function Home() {
 
           {/* Action Buttons */}
           <div className="flex gap-4 justify-center pt-4">
-            <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}`}>
+            <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&area=${area}&unit=${unit}&acres=${acres}`}>
               <Button className="bg-primary hover:bg-primary/90">
                 Complete Order
               </Button>
