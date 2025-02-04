@@ -12,8 +12,11 @@ interface ContactFormData {
   phone: string;
   email: string;
   company: string;
-  address: string;
+  street: string;
+  city: string;
+  postalCode: string;
   reason?: string;
+  message?: string;
 }
 
 export default function Contact() {
@@ -24,8 +27,11 @@ export default function Contact() {
     phone: "",
     email: "",
     company: "",
-    address: "",
+    street: "",
+    city: "",
+    postalCode: "",
     reason: "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -94,57 +100,83 @@ export default function Contact() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="company">Company Name</Label>
+                <Input
+                  id="company"
+                  name="company"
+                  required
+                  value={formData.company}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="street">Street Address</Label>
               <Input
-                id="name"
-                name="name"
+                id="street"
+                name="street"
                 required
-                value={formData.name}
+                value={formData.street}
                 onChange={handleInputChange}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">Company Name</Label>
-              <Input
-                id="company"
-                name="company"
-                required
-                value={formData.company}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input
-                id="address"
-                name="address"
-                required
-                value={formData.address}
-                onChange={handleInputChange}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  name="city"
+                  required
+                  value={formData.city}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="postalCode">Postal Code</Label>
+                <Input
+                  id="postalCode"
+                  name="postalCode"
+                  required
+                  value={formData.postalCode}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
             {!isOrder && (
               <div className="space-y-2">
@@ -167,6 +199,17 @@ export default function Contact() {
                 </Select>
               </div>
             )}
+            <div className="space-y-2">
+              <Label htmlFor="message">Message (250 characters max)</Label>
+              <textarea
+                id="message"
+                name="message"
+                className="w-full min-h-[100px] px-3 py-2 rounded-md border border-input bg-background"
+                maxLength={250}
+                value={formData.message}
+                onChange={handleInputChange}
+              />
+            </div>
             <div className="flex gap-4 justify-end pt-4">
               <Button
                 type="button"
