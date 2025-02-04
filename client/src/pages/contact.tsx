@@ -46,6 +46,18 @@ export default function Contact() {
   // Get query parameters
   const params = new URLSearchParams(window.location.search);
   const isOrder = params.get("type") === "order";
+  
+  // Initialize area values from URL parameters
+  useEffect(() => {
+    if (isOrder) {
+      setFormData(prev => ({
+        ...prev,
+        originalArea: params.get("originalArea") || "",
+        originalUnit: params.get("originalUnit") || "",
+        acres: params.get("acres") || ""
+      }));
+    }
+  }, [isOrder]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
