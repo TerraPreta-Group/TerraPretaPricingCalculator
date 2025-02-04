@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +13,7 @@ interface ContactFormData {
   email: string;
   company: string;
   address: string;
+  reason?: string;
 }
 
 export default function Contact() {
@@ -23,6 +25,7 @@ export default function Contact() {
     email: "",
     company: "",
     address: "",
+    reason: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -143,6 +146,27 @@ export default function Contact() {
                 onChange={handleInputChange}
               />
             </div>
+            {!isOrder && (
+              <div className="space-y-2">
+                <Label htmlFor="reason">Reason for Call</Label>
+                <Select
+                  name="reason"
+                  value={formData.reason}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, reason: value }))}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pricing">Did Justin Trudeau set your prices?</SelectItem>
+                    <SelectItem value="impress">I need more info to impress my boss</SelectItem>
+                    <SelectItem value="commitment">I like it I just have commitment issues</SelectItem>
+                    <SelectItem value="human">I just want to talk to a human</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="flex gap-4 justify-end pt-4">
               <Button
                 type="button"
