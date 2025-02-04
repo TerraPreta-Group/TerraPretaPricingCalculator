@@ -103,7 +103,7 @@ export default function Contact() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className="text-center block w-full">Full Name</Label>
               <Input
                 id="name"
                 name="name"
@@ -114,7 +114,7 @@ export default function Contact() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone" className="text-center block w-full">Phone Number</Label>
                 <Input
                   id="phone"
                   name="phone"
@@ -125,7 +125,7 @@ export default function Contact() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-center block w-full">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -137,7 +137,17 @@ export default function Contact() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="street">Street Address</Label>
+              <Label htmlFor="company" className="text-center block w-full">Company Name</Label>
+              <Input
+                id="company"
+                name="company"
+                required
+                value={formData.company}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="street" className="text-center block w-full">Street Address</Label>
               <Input
                 id="street"
                 name="street"
@@ -148,7 +158,7 @@ export default function Contact() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
+                <Label htmlFor="city" className="text-center block w-full">City</Label>
                 <Input
                   id="city"
                   name="city"
@@ -158,7 +168,7 @@ export default function Contact() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="province">Province</Label>
+                <Label htmlFor="province" className="text-center block w-full">Province</Label>
                 <Input
                   id="province"
                   name="province"
@@ -168,7 +178,7 @@ export default function Contact() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postal Code</Label>
+                <Label htmlFor="postalCode" className="text-center block w-full">Postal Code</Label>
                 <Input
                   id="postalCode"
                   name="postalCode"
