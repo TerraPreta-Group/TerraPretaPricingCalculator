@@ -14,6 +14,7 @@ interface ContactFormData {
   company: string;
   street: string;
   city: string;
+  province: string;
   postalCode: string;
   reason?: string;
   message?: string;
@@ -29,6 +30,7 @@ export default function Contact() {
     company: "",
     street: "",
     city: "",
+    province: "",
     postalCode: "",
     reason: "",
     message: "",
@@ -100,27 +102,15 @@ export default function Contact() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="company">Company Name</Label>
-                <Input
-                  id="company"
-                  name="company"
-                  required
-                  value={formData.company}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleInputChange}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -156,7 +146,7 @@ export default function Contact() {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
                 <Input
@@ -164,6 +154,16 @@ export default function Contact() {
                   name="city"
                   required
                   value={formData.city}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="province">Province</Label>
+                <Input
+                  id="province"
+                  name="province"
+                  required
+                  value={formData.province}
                   onChange={handleInputChange}
                 />
               </div>
