@@ -161,7 +161,7 @@ export default function Contact() {
                   <SelectContent>
                     <SelectItem value="pricing">Did Justin Trudeau set your prices?</SelectItem>
                     <SelectItem value="impress">I need more info to impress my boss</SelectItem>
-                    <SelectItem value="commitment">I like it I just have commitment issues</SelectItem>
+                    <SelectItem value="commitment">I like it, I just have commitment issues</SelectItem>
                     <SelectItem value="human">I just want to talk to a human</SelectItem>
                   </SelectContent>
                 </Select>
