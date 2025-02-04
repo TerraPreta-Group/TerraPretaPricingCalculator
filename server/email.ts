@@ -9,8 +9,7 @@ interface EmailData {
   html?: string;
 }
 
-const NOTIFICATION_EMAILS = ['tj@terrapreta.ca', 'lee@terrapreta.ca'];
-const SENDER_EMAIL = process.env.SMTP_FROM_EMAIL!;
+const NOTIFICATION_EMAIL = process.env.SMTP_FROM_EMAIL!;
 
 // Calculate tote bags needed (1000 lbs per bag, rounded up)
 function calculateToteBags(productAmount: number): number {
@@ -20,8 +19,8 @@ function calculateToteBags(productAmount: number): number {
 export async function sendEmail(emailData: EmailData): Promise<boolean> {
   try {
     const msg = {
-      to: NOTIFICATION_EMAILS,
-      from: SENDER_EMAIL, // Must be verified with SendGrid
+      to: NOTIFICATION_EMAIL,
+      from: NOTIFICATION_EMAIL, // Must be verified with SendGrid
       subject: emailData.subject,
       text: emailData.text,
       html: emailData.html || emailData.text,
