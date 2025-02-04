@@ -99,8 +99,14 @@ export function formatCallEmail(formData: any): EmailData {
       <li>City: ${formData.city}</li>
       <li>Province: ${formData.province}</li>
       <li>Postal Code: ${formData.postalCode}</li>
-      <li>Reason for Call: ${formData.reason || 'Not specified'}</li>
-      <li>Message: ${formData.message || 'No message provided'}</li>
+      <li>Reason for Call: ${
+        formData.reason === 'pricing' ? 'Did Justin Trudeau set your prices?' :
+        formData.reason === 'impress' ? 'I need more info to impress my boss' :
+        formData.reason === 'commitment' ? 'I like it, I just have commitment issues' :
+        formData.reason === 'human' ? 'I just want to talk to a human' :
+        'Not specified'
+      }</li>
+      <li>Additional Message: ${formData.message || 'No message provided'}</li>
     </ul>
   `;
 
