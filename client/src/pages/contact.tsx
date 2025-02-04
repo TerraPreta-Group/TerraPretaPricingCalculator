@@ -48,22 +48,14 @@ export default function Contact() {
 
   useEffect(() => {
     if (isOrder) {
-      const originalArea = params.get("originalArea");
-      const originalUnit = params.get("originalUnit");
-      const acres = params.get("acres");
-      const product = params.get("product");
-      const cost = params.get("cost");
-      
       setFormData(prev => ({
         ...prev,
-        originalArea,
-        originalUnit,
-        acres,
-        product,
-        cost
+        acres: params.get("acres") || "",
+        product: params.get("product") || "",
+        cost: params.get("cost") || ""
       }));
     }
-  }, []);
+  }, [isOrder]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
