@@ -20,7 +20,7 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
   try {
     const msg = {
       to: NOTIFICATION_EMAIL,
-      from: NOTIFICATION_EMAIL,
+      from: NOTIFICATION_EMAIL, // Must be verified with SendGrid
       subject: emailData.subject,
       text: emailData.text,
       html: emailData.html || emailData.text,
@@ -87,13 +87,6 @@ export function formatOrderEmail(formData: any): EmailData {
 }
 
 export function formatCallEmail(formData: any): EmailData {
-  const reasonMap: { [key: string]: string } = {
-    pricing: "Did Justin Trudeau set your prices?",
-    impress: "Need more info to impress my boss",
-    commitment: "I like everything but I have commitment issues",
-    human: "I just want to talk to a human"
-  };
-
   const html = `
     <h2>New Call Request</h2>
     <p><strong>Contact Information:</strong></p>
@@ -104,16 +97,11 @@ export function formatCallEmail(formData: any): EmailData {
       <li>Phone: ${formData.phone}</li>
       <li>Address: ${formData.address}</li>
     </ul>
-    <p><strong>Call Details:</strong></p>
-    <ul>
-      <li>Reason for Call: ${reasonMap[formData.callReason] || formData.callReason}</li>
-      ${formData.message ? `<li>Additional Message: ${formData.message}</li>` : ''}
-    </ul>
   `;
 
   return {
     subject: `Call Request - ${formData.company}`,
-    text: `New call request from ${formData.name} at ${formData.company}. Reason: ${reasonMap[formData.callReason] || formData.callReason}${formData.message ? `. Message: ${formData.message}` : ''}. Contact: ${formData.phone}, ${formData.email}`,
+    text: `New call request from ${formData.name} at ${formData.company}. Contact: ${formData.phone}, ${formData.email}`,
     html,
   };
 }
