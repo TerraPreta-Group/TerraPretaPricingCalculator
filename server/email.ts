@@ -9,10 +9,12 @@ interface EmailData {
   html?: string;
 }
 
-// In this application, all form submissions are sent as notifications
-// to a single email address (SMTP_FROM_EMAIL), which serves as both
-// the sender and recipient of these notification emails
 const NOTIFICATION_EMAIL = process.env.SMTP_FROM_EMAIL!;
+
+// Calculate tote bags needed (1000 lbs per bag, rounded up)
+function calculateToteBags(productAmount: number): number {
+  return Math.ceil(productAmount / 1000);
+}
 
 export async function sendEmail(emailData: EmailData): Promise<boolean> {
   try {
@@ -34,7 +36,6 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
     console.log('SendGrid response:', response);
     return true;
   } catch (error) {
-    // Log detailed error information
     if (error && typeof error === 'object' && 'response' in error) {
       const response = (error as any).response;
       console.error('SendGrid detailed error:', {
@@ -43,7 +44,6 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
         headers: response?.headers
       });
 
-      // Check for specific SendGrid errors
       const errorBody = response?.body;
       if (errorBody?.errors?.[0]?.message?.includes('sender')) {
         console.error('SendGrid error: Sender verification required. Please verify your sender email in SendGrid dashboard.');
@@ -58,6 +58,9 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
 }
 
 export function formatOrderEmail(formData: any): EmailData {
+  const productAmount = parseFloat(formData.product || '0');
+  const toteBags = calculateToteBags(productAmount);
+
   const html = `
     <h2>New Order Request</h2>
     <p><strong>Customer Information:</strong></p>
@@ -72,12 +75,13 @@ export function formatOrderEmail(formData: any): EmailData {
     <ul>
       <li>Product Amount: ${formData.product || 'Not specified'} lbs</li>
       <li>Total Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}</li>
+      <li>Tote Bags Required: ${toteBags} (${toteBags * 1000} lbs capacity)</li>
     </ul>
   `;
 
   return {
     subject: `New Pellet Order - ${formData.company}`,
-    text: `New order request from ${formData.name} at ${formData.company}. Product: ${formData.product || 'Not specified'} lbs, Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}. Contact: ${formData.phone}, ${formData.email}`,
+    text: `New order request from ${formData.name} at ${formData.company}. Product: ${formData.product || 'Not specified'} lbs, Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}, Tote Bags: ${toteBags} (${toteBags * 1000} lbs capacity). Contact: ${formData.phone}, ${formData.email}`,
     html,
   };
 }
