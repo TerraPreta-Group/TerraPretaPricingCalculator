@@ -219,6 +219,9 @@ export default function Contact() {
                 value={formData.message}
                 onChange={handleInputChange}
               />
+              <div className="text-sm text-muted-foreground text-right">
+                {(formData.message?.length || 0)}/250 characters
+              </div>
             </div>
             <div className="flex gap-4 justify-end pt-4">
               <Button
