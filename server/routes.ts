@@ -10,7 +10,12 @@ const baseContactFormSchema = z.object({
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email format"),
   company: z.string().min(1, "Company name is required"),
-  address: z.string().min(1, "Address is required"),
+  street: z.string().min(1, "Street address is required"),
+  city: z.string().min(1, "City is required"),
+  province: z.string().min(1, "Province is required"),
+  postalCode: z.string().min(1, "Postal code is required"),
+  message: z.string().optional(),
+  reason: z.string().optional(),
   type: z.enum(["order", "call"]),
 });
 

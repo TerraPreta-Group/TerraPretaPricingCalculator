@@ -91,11 +91,16 @@ export function formatCallEmail(formData: any): EmailData {
     <h2>New Call Request</h2>
     <p><strong>Contact Information:</strong></p>
     <ul>
-      <li>Name: ${formData.name}</li>
-      <li>Company: ${formData.company}</li>
+      <li>Full Name: ${formData.name}</li>
+      <li>Phone Number: ${formData.phone}</li>
       <li>Email: ${formData.email}</li>
-      <li>Phone: ${formData.phone}</li>
-      <li>Address: ${formData.address}</li>
+      <li>Company Name: ${formData.company}</li>
+      <li>Street Address: ${formData.street}</li>
+      <li>City: ${formData.city}</li>
+      <li>Province: ${formData.province}</li>
+      <li>Postal Code: ${formData.postalCode}</li>
+      <li>Reason for Call: ${formData.reason || 'Not specified'}</li>
+      <li>Message: ${formData.message || 'No message provided'}</li>
     </ul>
   `;
 
