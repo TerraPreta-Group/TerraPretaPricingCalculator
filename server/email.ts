@@ -79,7 +79,7 @@ export function formatOrderEmail(formData: any): EmailData {
         <p><strong>Total Cost:</strong> ${formData.cost ? `$${formData.cost}` : 'Not specified'}</p>
         <p><strong>Product Amount:</strong> ${formData.product || 'Not specified'} lbs</p>
         <p><strong>Tote Bags Required:</strong> ${toteBags}</p>
-        <p><strong>Total Area:</strong> ${formData.acres ? `${formData.acres} acres` : 'Not specified'}</p>
+        <p><strong>Area:</strong> ${formData.originalArea ? `${formData.originalArea} ${formData.originalUnit}` : 'Not specified'} (${formData.acres ? `${Number(formData.acres).toFixed(2)} acres` : 'Not specified'})</p>
       </div>
     </div>
   `;
