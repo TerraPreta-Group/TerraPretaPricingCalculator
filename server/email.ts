@@ -76,10 +76,9 @@ export function formatOrderEmail(formData: any): EmailData {
 
       <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
         <h3 style="color: #444; margin-top: 0;">Order Details</h3>
-        <p><strong>Total Cost:</strong> ${formData.cost ? `$${formData.cost}` : 'Not specified'}</p>
-        <p><strong>Product Amount:</strong> ${formData.product || 'Not specified'} lbs</p>
+        <p><strong>Total Cost:</strong> ${formData.cost ? `$${Number(formData.cost).toFixed(2)}` : 'Not specified'}</p>
+        <p><strong>Product Amount:</strong> ${formData.product ? `${Math.round(Number(formData.product))} lbs` : 'Not specified'}</p>
         <p><strong>Tote Bags Required:</strong> ${toteBags}</p>
-        <p><strong>Area:</strong> ${formData.acres ? `${Number(formData.acres).toFixed(2)} acres` : 'Not specified'}</p>
       </div>
     </div>
   `;
