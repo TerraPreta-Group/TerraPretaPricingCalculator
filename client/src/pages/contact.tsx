@@ -18,6 +18,9 @@ interface ContactFormData {
   postalCode: string;
   reason?: string;
   message?: string;
+  originalArea?: string;
+  originalUnit?: string;
+  acres?: string;
 }
 
 export default function Contact() {
@@ -34,6 +37,9 @@ export default function Contact() {
     postalCode: "",
     reason: "",
     message: "",
+    originalArea: "",
+    originalUnit: "",
+    acres: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -87,7 +93,7 @@ export default function Contact() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
