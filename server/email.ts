@@ -62,23 +62,26 @@ export function formatOrderEmail(formData: any): EmailData {
   const toteBags = calculateToteBags(productAmount);
 
   const html = `
-    <h2>New Order Request</h2>
-    <p><strong>Customer Information:</strong></p>
-    <ul>
-      <li>Name: ${formData.name}</li>
-      <li>Company: ${formData.company}</li>
-      <li>Email: ${formData.email}</li>
-      <li>Phone: ${formData.phone}</li>
-      <li>Address: ${formData.address}</li>
-    </ul>
-    <p><strong>Order Details:</strong></p>
-    <ul>
-      <li>Original Area: ${formData.area || 'Not specified'} ${formData.unit || ''}</li>
-      <li>Converted Area: ${formData.acres ? formatNumber(formData.acres) : 'Not specified'} acres</li>
-      <li>Product Amount: ${formData.product || 'Not specified'} lbs</li>
-      <li>Total Cost: ${formData.cost ? `$${formData.cost}` : 'Not specified'}</li>
-      <li>Tote Bags Required: ${toteBags} (${toteBags * 1000} lbs capacity)</li>
-    </ul>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">New Order Request</h2>
+      
+      <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
+        <h3 style="color: #444; margin-top: 0;">Customer Information</h3>
+        <p><strong>Name:</strong> ${formData.name}</p>
+        <p><strong>Company:</strong> ${formData.company}</p>
+        <p><strong>Email:</strong> ${formData.email}</p>
+        <p><strong>Phone:</strong> ${formData.phone}</p>
+        <p><strong>Address:</strong> ${formData.street}, ${formData.city}, ${formData.province} ${formData.postalCode}</p>
+      </div>
+
+      <div style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px;">
+        <h3 style="color: #444; margin-top: 0;">Order Details</h3>
+        <p><strong>Total Cost:</strong> ${formData.cost ? `$${formData.cost}` : 'Not specified'}</p>
+        <p><strong>Product Amount:</strong> ${formData.product || 'Not specified'} lbs</p>
+        <p><strong>Tote Bags Required:</strong> ${toteBags}</p>
+        <p><strong>Total Area:</strong> ${formData.acres ? `${formData.acres} acres` : 'Not specified'}</p>
+      </div>
+    </div>
   `;
 
   return {
