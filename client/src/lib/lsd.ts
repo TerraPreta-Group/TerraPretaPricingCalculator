@@ -52,8 +52,24 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const latitudeFactor = Math.cos(finalLat * Math.PI / 180);
     const adjustedRangeWidth = RANGE_WIDTH_BASE * latitudeFactor;
 
-    // Calculate range offset (moving east/west)
-    const rangeOffset = (range - 1) * adjustedRangeWidth;
+    // Calculate range offset based on meridian
+    let rangeOffset = 0;
+    switch (coords.meridian) {
+      case 'W4':
+        // Ranges increase westward from 110°W
+        rangeOffset = (range - 1) * adjustedRangeWidth;
+        break;
+      case 'W5':
+        // Ranges increase both ways from 114°W
+        rangeOffset = range <= 17 
+          ? -(range - 1) * adjustedRangeWidth  // East of W5
+          : (range - 17) * adjustedRangeWidth; // West of W5
+        break;
+      case 'W6':
+        // Ranges increase eastward from 118°W
+        rangeOffset = -(range - 1) * adjustedRangeWidth;
+        break;
+    }
 
     // Calculate section offset within township (6x6 grid)
     const sectionOffset = ((section - 1) % 6) * (adjustedRangeWidth / 6);
@@ -62,10 +78,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const lsdOffset = ((lsd - 1) % 4) * (adjustedRangeWidth / 24);
 
     // Calculate final longitude
-    const finalLng = base.lng + 
-      (coords.meridian === 'W4' ? rangeOffset : -rangeOffset) + 
-      sectionOffset + 
-      lsdOffset;
+    const finalLng = base.lng + rangeOffset + sectionOffset + lsdOffset;
 
     console.log('LSD Coordinate Calculation:', {
       input: coords,
