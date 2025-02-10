@@ -74,26 +74,25 @@ export default function Home() {
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (locationType === "town" && deliveryLocation.trim()) {
+      if ((locationType === "town" && deliveryLocation.trim()) || 
+          (locationType === "lsd" && lsdCoords.lsd && 
+           lsdCoords.section && lsdCoords.township && 
+           lsdCoords.range)) {
+
         setIsCalculatingDistance(true);
         try {
-          const distance = await calculateDistance(deliveryLocation.trim());
+          const distance = await calculateDistance(
+            locationType === "town" 
+              ? deliveryLocation.trim() 
+              : lsdCoords
+          );
           setDeliveryDistance(distance.toString());
         } catch (error) {
           console.error("Failed to calculate distance:", error);
+          setDeliveryDistance("");
+        } finally {
+          setIsCalculatingDistance(false);
         }
-        setIsCalculatingDistance(false);
-      } else if (locationType === "lsd" &&
-        lsdCoords.lsd && lsdCoords.section &&
-        lsdCoords.township && lsdCoords.range) {
-        setIsCalculatingDistance(true);
-        try {
-          const distance = await calculateDistance(formatLSDLocation(lsdCoords)); // Assuming formatLSDLocation exists
-          setDeliveryDistance(distance.toString());
-        } catch (error) {
-          console.error("Failed to calculate distance:", error);
-        }
-        setIsCalculatingDistance(false);
       } else {
         setDeliveryDistance("");
       }
@@ -209,7 +208,12 @@ export default function Home() {
                 <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Tote Bags (1,000 lbs each)</TableCell>
+                <TableCell className="font-medium text-base text-center">
+                  <div className="space-y-1">
+                    <div>Tote Bags</div>
+                    <div className="text-sm text-muted-foreground">(1000 lbs per bag)</div>
+                  </div>
+                </TableCell>
                 <TableCell className="text-base text-center pr-8">{toteBags} bags</TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">

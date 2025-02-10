@@ -32,16 +32,9 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
       }
 
       apiEndpoint = `/api/distance/coordinates/${coords.lat.toFixed(6)}/${coords.lng.toFixed(6)}`;
-      console.log('Using coordinates endpoint:', apiEndpoint);
     }
 
-    const response = await fetch(apiEndpoint, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache, no-store'
-      }
-    });
+    const response = await fetch(apiEndpoint);
 
     if (!response.ok) {
       console.error('Distance API HTTP error:', {

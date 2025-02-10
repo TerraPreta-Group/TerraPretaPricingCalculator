@@ -71,9 +71,10 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Route for town name-based distance calculation
   app.get("/api/distance/:destination", async (req: Request, res: Response) => {
     try {
-      let destination = decodeURIComponent(req.params.destination);
+      let destination = decodeURIComponent(req.params.destination).trim();
 
       // Append province and country if not provided
       if (!destination.toLowerCase().includes("ab") && !destination.toLowerCase().includes("alberta")) {
@@ -84,37 +85,48 @@ export function registerRoutes(app: Express): Server {
       }
 
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-
       if (!apiKey) {
         throw new Error("Google Maps API key is not configured");
       }
 
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
-          SUNDRE_LOCATION
-        )}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`
-      );
+      console.log('Calculating distance for town:', {
+        origin: SUNDRE_LOCATION,
+        destination: destination
+      });
+
+      const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json');
+      url.searchParams.append('origins', SUNDRE_LOCATION);
+      url.searchParams.append('destinations', destination);
+      url.searchParams.append('mode', 'driving');
+      url.searchParams.append('units', 'metric');
+      url.searchParams.append('key', apiKey);
+
+      const response = await fetch(url.toString());
 
       if (!response.ok) {
         throw new Error(`Distance API error: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Distance API response:", data);
+      console.log("Distance Matrix API response:", data);
 
-      if (
-        data.status === "OK" &&
-        data.rows[0]?.elements[0]?.status === "OK"
-      ) {
+      if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
         const distanceInMeters = data.rows[0].elements[0].distance.value;
-        const kilometers = Math.round(distanceInMeters / 1000); // Round to nearest km
+        const kilometers = Math.round(distanceInMeters / 1000);
+
+        console.log('Successfully calculated distance:', {
+          destination,
+          kilometers,
+          distanceText: data.rows[0].elements[0].distance.text
+        });
+
         res.json({ distance: kilometers });
       } else {
-        // More detailed error message
         console.error("Distance calculation failed:", {
           status: data.status,
           elementStatus: data.rows[0]?.elements[0]?.status,
-          destination: destination
+          destination: destination,
+          error: data.error_message
         });
         throw new Error(`Could not calculate distance to ${destination}`);
       }
@@ -127,6 +139,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Route for coordinate-based distance calculation
   app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
     try {
       const { lat, lng } = req.params;
@@ -150,7 +163,11 @@ export function registerRoutes(app: Express): Server {
         throw new Error("Google Maps API key is not configured");
       }
 
-      // Use Distance Matrix API for more accurate driving distance
+      console.log('Calculating distance from coordinates:', {
+        origin: `${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}`,
+        destination: `${latitude},${longitude}`
+      });
+
       const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json');
       url.searchParams.append('origins', `${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}`);
       url.searchParams.append('destinations', `${latitude},${longitude}`);
@@ -158,45 +175,23 @@ export function registerRoutes(app: Express): Server {
       url.searchParams.append('units', 'metric');
       url.searchParams.append('key', apiKey);
 
-      console.log('Making Distance Matrix API request:', {
-        origin: `${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}`,
-        destination: `${latitude},${longitude}`,
-        url: url.toString().replace(apiKey, 'REDACTED')
-      });
-
       const response = await fetch(url.toString());
 
       if (!response.ok) {
-        console.error('Distance Matrix API HTTP error:', response.status, response.statusText);
         throw new Error(`Distance API error: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("Distance Matrix API response:", data);
 
-      // Add detailed logging of the API response
-      console.log('Distance Matrix API Response:', {
-        status: data.status,
-        elementStatus: data.rows?.[0]?.elements?.[0]?.status,
-        distance: data.rows?.[0]?.elements?.[0]?.distance,
-        duration: data.rows?.[0]?.elements?.[0]?.duration,
-        rawResponse: JSON.stringify(data)
-      });
-
-      if (data.status === "OK" && data.rows?.[0]?.elements?.[0]?.status === "OK") {
+      if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
         const distanceInMeters = data.rows[0].elements[0].distance.value;
         const kilometers = Math.round(distanceInMeters / 1000);
-
-        console.log('Calculated driving distance:', {
-          kilometers,
-          distanceText: data.rows[0].elements[0].distance.text,
-          destination: data.destination_addresses[0]
-        });
-
         res.json({ distance: kilometers });
       } else {
         console.error("Distance calculation failed:", {
           status: data.status,
-          elementStatus: data.rows?.[0]?.elements?.[0]?.status,
+          elementStatus: data.rows[0]?.elements[0]?.status,
           coordinates: `${latitude},${longitude}`,
           error: data.error_message
         });
