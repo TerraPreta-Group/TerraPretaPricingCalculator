@@ -4,13 +4,13 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
 
-// Alberta bounds (adjusted to be more inclusive of border areas)
+// Alberta bounds (slightly expanded to account for edge cases)
 const ALBERTA_BOUNDS = {
   lat: { min: 48.9, max: 60.1 },
-  lng: { min: -120.1, max: -109.9 }
+  lng: { min: -120.1, max: -109.5 }  // Adjusted eastern boundary
 };
 
-// Base coordinates for meridians in Alberta (adjusted for accuracy)
+// Base coordinates for meridians in Alberta
 const meridianBase = {
   'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
   'W5': { lat: 49.0, lng: -114.0}, // Fifth Meridian
@@ -44,47 +44,37 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     // Get base coordinates for the specified meridian
     const base = meridianBase[coords.meridian as keyof typeof meridianBase];
 
-    // Calculate section position (1-36)
-    const sectionRow = Math.floor((section - 1) / 6);
-    const sectionCol = (section - 1) % 6;
-
-    // Calculate LSD position (1-16)
-    const lsdRow = Math.floor((lsd - 1) / 4);
-    const lsdCol = (lsd - 1) % 4;
-
-    // Calculate latitude with township offset
-    const finalLat = base.lat + (township - 1) * TOWNSHIP_HEIGHT;
+    // Calculate township offset (moving north)
+    const townshipOffset = (township - 1) * TOWNSHIP_HEIGHT;
+    const finalLat = base.lat + townshipOffset;
 
     // Adjust range width based on latitude (gets narrower as you go north)
     const latitudeFactor = Math.cos(finalLat * Math.PI / 180);
     const adjustedRangeWidth = RANGE_WIDTH_BASE * latitudeFactor;
 
-    // Calculate longitude with range, section, and LSD offsets
-    const finalLng = base.lng + 
-      (range - 1) * adjustedRangeWidth + // Range offset
-      (sectionCol / 6) * adjustedRangeWidth + // Section offset
-      (lsdCol / 24) * adjustedRangeWidth; // LSD offset
+    // Calculate range offset (moving east/west)
+    const rangeOffset = (range - 1) * adjustedRangeWidth;
 
-    // Log detailed calculation steps
+    // Calculate section offset within township (6x6 grid)
+    const sectionOffset = ((section - 1) % 6) * (adjustedRangeWidth / 6);
+
+    // Calculate LSD offset within section (4x4 grid)
+    const lsdOffset = ((lsd - 1) % 4) * (adjustedRangeWidth / 24);
+
+    // Calculate final longitude
+    const finalLng = base.lng + 
+      (coords.meridian === 'W4' ? rangeOffset : -rangeOffset) + 
+      sectionOffset + 
+      lsdOffset;
+
     console.log('LSD Coordinate Calculation:', {
       input: coords,
-      base: base,
-      constants: {
-        TOWNSHIP_HEIGHT,
-        RANGE_WIDTH_BASE,
-        latitudeFactor,
-        adjustedRangeWidth
-      },
+      base,
       offsets: {
-        township: (township - 1) * TOWNSHIP_HEIGHT,
-        section: {
-          row: sectionRow,
-          col: sectionCol
-        },
-        lsd: {
-          row: lsdRow,
-          col: lsdCol
-        }
+        township: townshipOffset,
+        range: rangeOffset,
+        section: sectionOffset,
+        lsd: lsdOffset
       },
       result: { lat: finalLat, lng: finalLng }
     });
@@ -98,7 +88,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
 
     return { lat: finalLat, lng: finalLng };
   } catch (error) {
-    console.error('Error converting LSD to coordinates:', error);
+    console.error('Error converting LSD coordinates:', error);
     return null;
   }
 }

@@ -204,7 +204,7 @@ export default function Home() {
               </TableRow>
               {/* Modified Table Rows */}
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Estimated Pellets</TableCell>
+                <TableCell className="font-medium text-base text-center">Pellets</TableCell>
                 <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
@@ -331,9 +331,9 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
-              {/* Changed "Estimated Delivery Cost" to "Estimated Delivery" */}
+              {/* Changed "Estimated Delivery Cost" to "Delivery" */}
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Estimated Delivery</TableCell>
+                <TableCell className="font-bold text-xl text-center">Delivery</TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
