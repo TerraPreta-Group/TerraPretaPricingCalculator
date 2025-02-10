@@ -175,22 +175,22 @@ export default function Home() {
               </TableRow>
               <TableRow className="bg-primary/10">
                 <TableCell className="font-medium text-center">Cost of Pellets</TableCell>
-                <TableCell className="text-lg font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
+                <TableCell className="text-2xl font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-center">Pickup</TableCell>
+                <TableCell className="font-medium text-center">Pickup from Sundre, AB</TableCell>
                 <TableCell>
                   <div className="flex gap-2 justify-end">
                     <Button
                       variant={pickup === "yes" ? "default" : "outline"}
-                      size="sm"
+                      size="lg"
                       onClick={() => setPickup("yes")}
                     >
                       Yes
                     </Button>
                     <Button
                       variant={pickup === "no" ? "default" : "outline"}
-                      size="sm"
+                      size="lg"
                       onClick={() => setPickup("no")}
                     >
                       No
@@ -214,7 +214,11 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
-              <TableRow className="bg-primary/10 py-2">
+              <TableRow>
+                <TableCell className="font-medium text-center">Cost of Delivery</TableCell>
+                <TableCell className="text-2xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
+              </TableRow>
+              <TableRow className="bg-primary/10">
                 <TableCell className="font-bold text-lg text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
@@ -224,20 +228,21 @@ export default function Home() {
           {/* Action Buttons */}
           <div className="flex gap-4 justify-center pt-4">
             <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button className="bg-primary hover:bg-primary/90 text-lg py-6 px-8">
                 Complete Order
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white text-lg py-6 px-8">
                 Questions?
               </Button>
             </Link>
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            All calculations are automatically converted to acres
+            All calculations are automatically converted to acres.  Note: 1 hectare is approximately 2.47 acres.
           </p>
+
         </CardContent>
       </Card>
     </div>
