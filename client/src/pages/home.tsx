@@ -209,8 +209,8 @@ export default function Home() {
                 <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Tote Bags</TableCell>
-                <TableCell className="text-base text-center pr-8">{toteBags} bags (1,000 lbs each)</TableCell>
+                <TableCell className="font-medium text-base text-center">Tote Bags (1,000 lbs each)</TableCell>
+                <TableCell className="text-base text-center pr-8">{toteBags} bags</TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center">Cost of Pellets</TableCell>
@@ -262,7 +262,7 @@ export default function Home() {
                           type="text"
                           value={deliveryLocation}
                           onChange={(e) => setDeliveryLocation(e.target.value)}
-                          placeholder="Enter town name (e.g., Hanna, AB)"
+                          placeholder="Enter town name"
                           className="w-full"
                         />
                         <div className="flex items-center gap-2 justify-center text-sm">

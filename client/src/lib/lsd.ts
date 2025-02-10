@@ -4,6 +4,13 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
 
+// Base coordinates for meridians in Alberta (adjusted for accuracy)
+const meridianBase = {
+  'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
+  'W5': { lat: 49.0, lng: -114.0}, // Fifth Meridian
+  'W6': { lat: 49.0, lng: -118.0}  // Sixth Meridian
+};
+
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
   try {
     console.log("Converting LSD coordinates:", coords);
@@ -22,13 +29,6 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       console.error('Invalid LSD values:', coords);
       return null;
     }
-
-    // Base coordinates for meridians in Alberta (adjusted for accuracy)
-    const meridianBase = {
-      'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
-      'W5': { lat: 49.0, lng: -114.0}, // Fifth Meridian
-      'W6': { lat: 49.0, lng: -118.0}  // Sixth Meridian
-    };
 
     if (!meridianBase[coords.meridian as keyof typeof meridianBase]) {
       console.error('Invalid meridian:', coords.meridian);
