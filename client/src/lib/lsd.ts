@@ -4,17 +4,17 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
 
-// Alberta bounds (slightly expanded to account for edge cases)
+// Alberta bounds (adjusted for complete coverage)
 const ALBERTA_BOUNDS = {
   lat: { min: 48.9, max: 60.1 },
-  lng: { min: -120.1, max: -109.5 }  // Adjusted eastern boundary
+  lng: { min: -120.1, max: -109.0 }  // Adjusted to include all of W4 territory
 };
 
-// Base coordinates for meridians in Alberta
+// Base coordinates for meridians in Alberta (adjusted for accuracy)
 const meridianBase = {
-  'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
-  'W5': { lat: 49.0, lng: -114.0}, // Fifth Meridian
-  'W6': { lat: 49.0, lng: -118.0}  // Sixth Meridian
+  'W4': { lat: 49.0, lng: -110.0 }, // Fourth Meridian (AB/SK border)
+  'W5': { lat: 49.0, lng: -114.0 }, // Fifth Meridian
+  'W6': { lat: 49.0, lng: -118.0 }  // Sixth Meridian
 };
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
