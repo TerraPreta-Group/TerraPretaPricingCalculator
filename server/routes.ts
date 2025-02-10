@@ -159,11 +159,29 @@ export function registerRoutes(app: Express): Server {
       // Use Distance Matrix API for more accurate straight-line distance
       const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&mode=driving&units=metric&key=${apiKey}`;
 
-      console.log('Making Google Maps API request:', url.replace(apiKey, 'REDACTED'));
+      console.log('Making Distance Matrix API request:', {
+        from: {
+          lat: SUNDRE_COORDS.lat,
+          lng: SUNDRE_COORDS.lng,
+          name: 'Sundre, AB'
+        },
+        to: {
+          lat: latitude,
+          lng: longitude
+        },
+        url: url.replace(apiKey, 'REDACTED')
+      });
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      });
 
       if (!response.ok) {
+        console.error('Distance Matrix API HTTP error:', response.status, response.statusText);
         throw new Error(`Distance API error: ${response.status}`);
       }
 
@@ -172,7 +190,8 @@ export function registerRoutes(app: Express): Server {
         status: data.status,
         rows: data.rows?.[0]?.elements?.[0],
         destination: data.destination_addresses?.[0],
-        origin: data.origin_addresses?.[0]
+        origin: data.origin_addresses?.[0],
+        rawResponse: JSON.stringify(data)
       });
 
       if (data.status === "OK" && data.rows?.[0]?.elements?.[0]?.status === "OK") {
@@ -182,7 +201,8 @@ export function registerRoutes(app: Express): Server {
         console.log('Calculated driving distance:', {
           kilometers,
           distanceText: data.rows[0].elements[0].distance.text,
-          destination: data.destination_addresses[0]
+          destination: data.destination_addresses[0],
+          rawDistance: distanceInMeters
         });
 
         res.json({ distance: kilometers });
@@ -190,7 +210,8 @@ export function registerRoutes(app: Express): Server {
         console.error("Distance calculation failed:", {
           status: data.status,
           elementStatus: data.rows?.[0]?.elements?.[0]?.status,
-          coordinates: `${latitude},${longitude}`
+          coordinates: `${latitude},${longitude}`,
+          fullResponse: JSON.stringify(data)
         });
         throw new Error(`Could not calculate distance to coordinates ${latitude},${longitude}`);
       }
