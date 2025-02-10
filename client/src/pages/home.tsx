@@ -70,7 +70,7 @@ export default function Home() {
           {/* Area Input Section */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="area" className="block mb-2">Area</Label>
+              <Label htmlFor="area" className="block mb-2 text-xl font-medium">Area</Label>
               <div className="flex gap-4 justify-center">
                 <Input
                   id="area"
@@ -98,7 +98,7 @@ export default function Home() {
           {/* Custom Area Calculator */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label className="block mb-2">Custom Area Calculator</Label>
+              <Label className="block mb-2 text-xl font-medium">Custom Area Calculator</Label>
               <div className="flex items-center gap-4 justify-center">
                 <Input
                   type="text"
@@ -146,19 +146,19 @@ export default function Home() {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Recommended Application Rate</TableCell>
-                <TableCell>1500 lbs per Acre</TableCell>
+                <TableCell className="text-lg">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Cost per lb</TableCell>
-                <TableCell>$1.75</TableCell>
+                <TableCell className="text-lg">$1.75</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
                 <TableCell className="font-medium">Required Pellets</TableCell>
-                <TableCell>{formatNumber(requiredProduct)} lbs</TableCell>
+                <TableCell className="text-lg">{formatNumber(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
                 <TableCell className="font-medium">Tote Bags Required</TableCell>
-                <TableCell>{toteBags} bags (1,000 lbs each)</TableCell>
+                <TableCell className="text-lg">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
               <TableRow className="bg-primary/10 py-2">
                 <TableCell className="font-bold text-lg">Total Cost</TableCell>
