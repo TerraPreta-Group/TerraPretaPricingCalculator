@@ -1,22 +1,8 @@
 import { z } from "zod";
 
-export interface LSDCoordinates {
-  lsd: string;
-  section: string;
-  township: string;
-  range: string;
-  meridian: string;
-}
-
-export function formatLSDLocation(coords: LSDCoordinates): string {
-  console.log("Formatting LSD Coordinates:", coords);
-  return `${coords.lsd}-${coords.section}-${coords.township}-${coords.range} ${coords.meridian}`;
-}
-
 // Constants for the Alberta Township System (ATS)
-// Each township is approximately 6 miles (9.7 km) square
-const TOWNSHIP_HEIGHT = 0.0833; // Degrees latitude per township (roughly 6 miles)
-const RANGE_WIDTH = 0.0972; // Degrees longitude per range at ~52°N (Alberta's middle latitude)
+const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
+const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
   try {
@@ -37,11 +23,11 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       return null;
     }
 
-    // Base coordinates for meridians in Alberta
+    // Base coordinates for meridians in Alberta (adjusted for accuracy)
     const meridianBase = {
-      'W4': { lat: 49.0, lng: -110.0 }, // Fourth Meridian
-      'W5': { lat: 49.0, lng: -114.0 }, // Fifth Meridian
-      'W6': { lat: 49.0, lng: -118.0 }  // Sixth Meridian
+      'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
+      'W5': { lat: 49.0, lng: -114.0}, // Fifth Meridian
+      'W6': { lat: 49.0, lng: -118.0}  // Sixth Meridian
     };
 
     if (!meridianBase[coords.meridian as keyof typeof meridianBase]) {
@@ -60,16 +46,19 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const lsdRow = Math.floor((lsd - 1) / 4);
     const lsdCol = (lsd - 1) % 4;
 
-    // Calculate final coordinates
+    // Calculate latitude
     const finalLat = base.lat + 
-      (township - 1) * TOWNSHIP_HEIGHT + // Township offset
-      sectionRow * (TOWNSHIP_HEIGHT / 6) + // Section offset
-      lsdRow * (TOWNSHIP_HEIGHT / 24); // LSD offset
+      (township - 1) * TOWNSHIP_HEIGHT;
 
+    // Adjust range width based on latitude (gets narrower as you go north)
+    const latitudeFactor = Math.cos(finalLat * Math.PI / 180);
+    const adjustedRangeWidth = RANGE_WIDTH_BASE * latitudeFactor;
+
+    // Calculate longitude with corrections
     const finalLng = base.lng + 
-      (range - 1) * RANGE_WIDTH + // Range offset
-      sectionCol * (RANGE_WIDTH / 6) + // Section offset
-      lsdCol * (RANGE_WIDTH / 24); // LSD offset
+      (range - 1) * adjustedRangeWidth + // Range offset
+      (sectionCol / 6) * adjustedRangeWidth + // Section offset
+      (lsdCol / 24) * adjustedRangeWidth; // LSD offset
 
     // Log detailed calculation steps
     console.log('LSD Coordinate Calculation:', {
@@ -77,24 +66,25 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       base: base,
       constants: {
         TOWNSHIP_HEIGHT,
-        RANGE_WIDTH
+        RANGE_WIDTH_BASE,
+        latitudeFactor,
+        adjustedRangeWidth
       },
       offsets: {
         township: (township - 1) * TOWNSHIP_HEIGHT,
         section: {
-          row: sectionRow * (TOWNSHIP_HEIGHT / 6),
-          col: sectionCol * (RANGE_WIDTH / 6)
+          row: sectionRow,
+          col: sectionCol
         },
         lsd: {
-          row: lsdRow * (TOWNSHIP_HEIGHT / 24),
-          col: lsdCol * (RANGE_WIDTH / 24)
+          row: lsdRow,
+          col: lsdCol
         }
       },
       result: { lat: finalLat, lng: finalLng }
     });
 
-    // Validate final coordinates are within Alberta's extended bounds
-    // Allow slightly wider bounds to account for edge cases
+    // Validate final coordinates are within Alberta's bounds
     if (finalLat < 48.5 || finalLat > 60.5 || 
         finalLng < -120.5 || finalLng > -109.5) {
       console.error('Calculated coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
@@ -106,4 +96,17 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     console.error('Error converting LSD to coordinates:', error);
     return null;
   }
+}
+
+export function formatLSDLocation(coords: LSDCoordinates): string {
+  console.log("Formatting LSD Coordinates:", coords);
+  return `${coords.lsd}-${coords.section}-${coords.township}-${coords.range} ${coords.meridian}`;
+}
+
+export interface LSDCoordinates {
+  lsd: string;
+  section: string;
+  township: string;
+  range: string;
+  meridian: string;
 }
