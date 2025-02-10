@@ -114,7 +114,7 @@ export default function Home() {
       <Card className="w-full max-w-xl border-2 border-black">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Pellet Pricing Calculator
+            Pellet Pricing Estimator
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
