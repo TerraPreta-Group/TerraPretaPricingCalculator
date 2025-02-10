@@ -18,26 +18,23 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const section = parseInt(coords.section);
     const lsd = parseInt(coords.lsd);
 
-    // Base coordinates for different meridians in Alberta (calibrated values)
+    // Base coordinates for different meridians in Alberta
     const meridianBase = {
-      'W4': { lat: 49.0, lng: -110.0012 },
-      'W5': { lat: 49.0, lng: -114.0012 },
-      'W6': { lat: 49.0, lng: -118.0012 }
+      'W4': { lat: 49.0, lng: -110.0 },
+      'W5': { lat: 49.0, lng: -114.0 },
+      'W6': { lat: 49.0, lng: -118.0 }
     };
 
     if (!meridianBase[coords.meridian as keyof typeof meridianBase]) {
+      console.error('Invalid meridian:', coords.meridian);
       return null;
     }
 
     const base = meridianBase[coords.meridian as keyof typeof meridianBase];
 
-    // Constants for precise calculations (adjusted for Alberta's curved surface)
+    // Constants for precise calculations
     const TOWNSHIP_HEIGHT = 0.0571428; // Approximately 6 miles north-south
     const RANGE_WIDTH = 0.0666667; // Approximately 6 miles east-west at base latitude
-
-    // Adjust for earth's curvature - ranges get narrower as we go north
-    const latitudeFactor = Math.cos((base.lat + township * TOWNSHIP_HEIGHT) * Math.PI / 180);
-    const adjustedRangeWidth = RANGE_WIDTH / latitudeFactor;
 
     // Calculate section position (1-36)
     const sectionRow = Math.floor((section - 1) / 6);
@@ -49,16 +46,27 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
 
     // Final position calculation
     const lat = base.lat + 
-                (township * TOWNSHIP_HEIGHT) +
-                (sectionRow * TOWNSHIP_HEIGHT / 6) +
-                (lsdRow * TOWNSHIP_HEIGHT / 24);
+                (township * TOWNSHIP_HEIGHT);
 
-    const lng = base.lng +
-                (range * adjustedRangeWidth) +
-                (sectionCol * adjustedRangeWidth / 6) +
-                (lsdCol * adjustedRangeWidth / 24);
+    const lng = base.lng -
+                (range * RANGE_WIDTH);
 
-    return { lat, lng };
+    // Add section and LSD offsets
+    const finalLat = lat + 
+                    (sectionRow * TOWNSHIP_HEIGHT / 6) +
+                    (lsdRow * TOWNSHIP_HEIGHT / 24);
+
+    const finalLng = lng + 
+                    (sectionCol * RANGE_WIDTH / 6) +
+                    (lsdCol * RANGE_WIDTH / 24);
+
+    console.log('LSD to Coordinates:', {
+      input: coords,
+      base: base,
+      calculated: { lat: finalLat, lng: finalLng }
+    });
+
+    return { lat: finalLat, lng: finalLng };
   } catch (error) {
     console.error('Error converting LSD to coordinates:', error);
     return null;

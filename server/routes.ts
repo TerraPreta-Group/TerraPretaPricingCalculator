@@ -131,9 +131,14 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
     try {
       const { lat, lng } = req.params;
-      const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Updated Sundre, AB coordinates based on Google Maps
-      const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+      const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Updated Sundre, AB coordinates
 
+      console.log('Distance calculation request:', {
+        from: SUNDRE_COORDS,
+        to: { lat, lng }
+      });
+
+      const apiKey = process.env.GOOGLE_MAPS_API_KEY;
       if (!apiKey) {
         throw new Error("Google Maps API key is not configured");
       }
@@ -147,10 +152,12 @@ export function registerRoutes(app: Express): Server {
       }
 
       const data = await response.json();
+      console.log("Google Maps API Response:", JSON.stringify(data, null, 2));
 
       if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
         const distanceInMeters = data.rows[0].elements[0].distance.value;
         const kilometers = Math.round(distanceInMeters / 1000);
+        console.log('Calculated distance:', kilometers, 'km');
         res.json({ distance: kilometers });
       } else {
         console.error("Distance calculation failed:", {

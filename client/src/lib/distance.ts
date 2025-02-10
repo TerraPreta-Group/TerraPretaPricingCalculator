@@ -15,12 +15,15 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
     } else {
       // LSD coordinates
       const coords = lsdToLatLong(destination);
+      console.log('Converted LSD coordinates:', coords);
+
       if (!coords) {
         throw new Error('Invalid LSD coordinates');
       }
       apiEndpoint = `/api/distance/coordinates/${coords.lat}/${coords.lng}`;
     }
 
+    console.log('Calling distance API endpoint:', apiEndpoint);
     const response = await fetch(apiEndpoint);
 
     if (!response.ok) {
