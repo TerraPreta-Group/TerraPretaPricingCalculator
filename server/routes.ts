@@ -73,7 +73,16 @@ export function registerRoutes(app: Express): Server {
 
   app.get("/api/distance/:destination", async (req: Request, res: Response) => {
     try {
-      const destination = decodeURIComponent(req.params.destination);
+      let destination = decodeURIComponent(req.params.destination);
+
+      // Append province and country if not provided
+      if (!destination.toLowerCase().includes("ab") && !destination.toLowerCase().includes("alberta")) {
+        destination += ", AB";
+      }
+      if (!destination.toLowerCase().includes("canada")) {
+        destination += ", Canada";
+      }
+
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
       if (!apiKey) {
@@ -101,7 +110,13 @@ export function registerRoutes(app: Express): Server {
         const kilometers = Math.round(distanceInMeters / 1000); // Round to nearest km
         res.json({ distance: kilometers });
       } else {
-        throw new Error("Could not calculate distance");
+        // More detailed error message
+        console.error("Distance calculation failed:", {
+          status: data.status,
+          elementStatus: data.rows[0]?.elements[0]?.status,
+          destination: destination
+        });
+        throw new Error(`Could not calculate distance to ${destination}`);
       }
     } catch (error) {
       console.error("Distance calculation error:", error);

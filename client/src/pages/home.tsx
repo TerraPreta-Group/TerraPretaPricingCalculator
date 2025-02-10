@@ -223,7 +223,7 @@ export default function Home() {
                       type="text"
                       value={deliveryLocation}
                       onChange={(e) => setDeliveryLocation(e.target.value)}
-                      placeholder="Enter town or location..."
+                      placeholder="Enter town name (e.g., Hanna, AB)"
                       className="w-full"
                     />
                     <div className="flex items-center gap-2 justify-end text-sm">
@@ -236,7 +236,7 @@ export default function Home() {
                             <span>× $1.50 per km</span>
                           </>
                         ) : (
-                          <span className="text-muted-foreground">Enter a valid location</span>
+                          <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
                         )
                       ) : (
                         <span className="text-muted-foreground">Enter a location to calculate distance</span>
