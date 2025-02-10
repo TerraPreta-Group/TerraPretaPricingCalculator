@@ -158,27 +158,27 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium text-center">Recommended Application Rate</TableCell>
-                <TableCell className="text-lg">1500 lbs per Acre</TableCell>
+                <TableCell className="font-medium text-center text-base">Recommended Application Rate</TableCell>
+                <TableCell className="text-base">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-bold text-lg text-center">Cost per lb</TableCell>
-                <TableCell className="text-lg">$1.75</TableCell>
+                <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
+                <TableCell className="text-base">$1.75</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
-                <TableCell className="font-bold text-lg text-center">Required Pellets</TableCell>
-                <TableCell className="text-lg">{formatNumber(requiredProduct)} lbs</TableCell>
+                <TableCell className="font-medium text-base text-center">Required Pellets</TableCell>
+                <TableCell className="text-base">{formatNumber(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
-                <TableCell className="font-bold text-lg text-center">Tote Bags Required</TableCell>
-                <TableCell className="text-lg">{toteBags} bags (1,000 lbs each)</TableCell>
+                <TableCell className="font-medium text-base text-center">Tote Bags Required</TableCell>
+                <TableCell className="text-base">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
-              <TableRow className="bg-primary/10">
-                <TableCell className="font-bold text-lg text-center">Cost of Pellets</TableCell>
-                <TableCell className="text-2xl font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
+              <TableRow className="bg-gray-200">
+                <TableCell className="font-bold text-xl text-center">Cost of Pellets</TableCell>
+                <TableCell className="text-xl font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-bold text-lg text-center">Pickup from Sundre, AB</TableCell>
+                <TableCell className="font-medium text-base text-center">Pickup from Sundre</TableCell>
                 <TableCell>
                   <div className="flex gap-2 justify-end">
                     <Button
@@ -199,7 +199,7 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-bold text-lg text-center">Delivery from Sundre</TableCell>
+                <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2 justify-end">
                     <Input
@@ -213,12 +213,12 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
-              <TableRow className="bg-green-100">
-                <TableCell className="font-bold text-lg text-center">Cost of Delivery</TableCell>
-                <TableCell className="text-2xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
+              <TableRow className="bg-gray-200">
+                <TableCell className="font-bold text-xl text-center">Cost of Delivery</TableCell>
+                <TableCell className="text-xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-slate-100">
-                <TableCell className="font-bold text-lg text-center">Total Cost</TableCell>
+                <TableCell className="font-bold text-2xl text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
             </TableBody>
