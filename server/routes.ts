@@ -130,7 +130,7 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
     try {
       const { lat, lng } = req.params;
-      const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Updated Sundre, AB coordinates
+      const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Sundre, AB coordinates
 
       // Parse and validate coordinates
       const latitude = parseFloat(lat);
@@ -147,7 +147,8 @@ export function registerRoutes(app: Express): Server {
 
       console.log('Distance calculation request:', {
         from: SUNDRE_COORDS,
-        to: { lat: latitude, lng: longitude }
+        to: { lat: latitude, lng: longitude },
+        type: 'Coordinates'
       });
 
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -155,8 +156,10 @@ export function registerRoutes(app: Express): Server {
         throw new Error("Google Maps API key is not configured");
       }
 
-      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&key=${apiKey}`;
-      console.log('Making request to:', url);
+      // Use directions API instead of distance matrix for more accurate routing
+      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destination=${latitude},${longitude}&mode=driving&region=ca&key=${apiKey}`;
+
+      console.log('Making Google Maps API request:', url.replace(apiKey, 'REDACTED'));
 
       const response = await fetch(url);
 
@@ -167,15 +170,24 @@ export function registerRoutes(app: Express): Server {
       const data = await response.json();
       console.log("Google Maps API Response:", JSON.stringify(data, null, 2));
 
-      if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
-        const distanceInMeters = data.rows[0].elements[0].distance.value;
+      if (data.status === "OK" && data.routes && data.routes[0]) {
+        // Calculate total distance from all legs
+        const distanceInMeters = data.routes[0].legs.reduce(
+          (total: number, leg: any) => total + leg.distance.value,
+          0
+        );
         const kilometers = Math.round(distanceInMeters / 1000);
-        console.log('Calculated distance:', kilometers, 'km');
+
+        console.log('Calculated driving distance:', kilometers, 'km', {
+          route: data.routes[0].summary,
+          bounds: data.routes[0].bounds
+        });
+
         res.json({ distance: kilometers });
       } else {
         console.error("Distance calculation failed:", {
           status: data.status,
-          elementStatus: data.rows[0]?.elements[0]?.status,
+          error_message: data.error_message,
           coordinates: `${latitude},${longitude}`
         });
         throw new Error(`Could not calculate distance to coordinates ${latitude},${longitude}`);
