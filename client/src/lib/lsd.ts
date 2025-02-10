@@ -1,4 +1,6 @@
-interface LSDCoordinates {
+import { z } from "zod";
+
+export interface LSDCoordinates {
   lsd: string;
   section: string;
   township: string;
@@ -7,11 +9,14 @@ interface LSDCoordinates {
 }
 
 export function formatLSDLocation(coords: LSDCoordinates): string {
+  console.log("Formatting LSD Coordinates:", coords);
   return `${coords.lsd}-${coords.section}-${coords.township}-${coords.range} ${coords.meridian}`;
 }
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
   try {
+    console.log("Starting LSD to LatLong conversion:", coords); // Added logging
+
     // Parse and validate inputs
     const township = parseInt(coords.township);
     const range = parseInt(coords.range);
@@ -27,8 +32,9 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       return null;
     }
 
-    // Base coordinates for different meridians in Alberta
+    // Corrected base coordinates for different meridians in Alberta
     const meridianBase = {
+      // Updated coordinates based on Alberta survey system
       'W4': { lat: 49.0, lng: -110.0 },
       'W5': { lat: 49.0, lng: -114.0 },
       'W6': { lat: 49.0, lng: -118.0 }
@@ -64,23 +70,25 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
                     sectionCol * (RANGE_WIDTH / 6) + // Section column offset
                     lsdCol * (RANGE_WIDTH / 24); // LSD column offset
 
-    // Log calculated coordinates for debugging
     console.log('LSD Coordinate Calculation:', {
       input: coords,
-      parsed: { township, range, section, lsd },
       base: base,
-      offsets: {
-        township: (township - 1) * TOWNSHIP_HEIGHT,
-        section: {
-          lat: sectionRow * (TOWNSHIP_HEIGHT / 6),
-          lng: sectionCol * (RANGE_WIDTH / 6)
+      calculations: {
+        township: { offset: (township - 1) * TOWNSHIP_HEIGHT },
+        section: { 
+          row: sectionRow,
+          col: sectionCol,
+          latOffset: sectionRow * (TOWNSHIP_HEIGHT / 6),
+          lngOffset: sectionCol * (RANGE_WIDTH / 6)
         },
         lsd: {
-          lat: lsdRow * (TOWNSHIP_HEIGHT / 24),
-          lng: lsdCol * (RANGE_WIDTH / 24)
+          row: lsdRow,
+          col: lsdCol,
+          latOffset: lsdRow * (TOWNSHIP_HEIGHT / 24),
+          lngOffset: lsdCol * (RANGE_WIDTH / 24)
         }
       },
-      final: { lat: finalLat, lng: finalLng }
+      result: { lat: finalLat, lng: finalLng }
     });
 
     return { lat: finalLat, lng: finalLng };

@@ -127,7 +127,6 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  // Add new endpoint for coordinate-based distance calculation
   app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
     try {
       const { lat, lng } = req.params;
@@ -156,9 +155,10 @@ export function registerRoutes(app: Express): Server {
         throw new Error("Google Maps API key is not configured");
       }
 
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&key=${apiKey}`
-      );
+      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&key=${apiKey}`;
+      console.log('Making request to:', url);
+
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Distance API error: ${response.status}`);
