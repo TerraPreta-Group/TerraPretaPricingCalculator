@@ -145,12 +145,6 @@ export function registerRoutes(app: Express): Server {
         throw new Error('Coordinates outside Alberta bounds');
       }
 
-      console.log('Distance calculation request:', {
-        from: SUNDRE_COORDS,
-        to: { lat: latitude, lng: longitude },
-        type: 'Coordinates'
-      });
-
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
       if (!apiKey) {
         throw new Error("Google Maps API key is not configured");
@@ -165,25 +159,12 @@ export function registerRoutes(app: Express): Server {
       url.searchParams.append('key', apiKey);
 
       console.log('Making Distance Matrix API request:', {
-        from: {
-          lat: SUNDRE_COORDS.lat,
-          lng: SUNDRE_COORDS.lng,
-          name: 'Sundre, AB'
-        },
-        to: {
-          lat: latitude,
-          lng: longitude
-        },
+        origin: `${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}`,
+        destination: `${latitude},${longitude}`,
         url: url.toString().replace(apiKey, 'REDACTED')
       });
 
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache, no-store'
-        }
-      });
+      const response = await fetch(url.toString());
 
       if (!response.ok) {
         console.error('Distance Matrix API HTTP error:', response.status, response.statusText);
@@ -191,11 +172,13 @@ export function registerRoutes(app: Express): Server {
       }
 
       const data = await response.json();
-      console.log("Distance Matrix API Response:", {
+
+      // Add detailed logging of the API response
+      console.log('Distance Matrix API Response:', {
         status: data.status,
-        rows: data.rows?.[0]?.elements?.[0],
-        destination: data.destination_addresses?.[0],
-        origin: data.origin_addresses?.[0],
+        elementStatus: data.rows?.[0]?.elements?.[0]?.status,
+        distance: data.rows?.[0]?.elements?.[0]?.distance,
+        duration: data.rows?.[0]?.elements?.[0]?.duration,
         rawResponse: JSON.stringify(data)
       });
 
@@ -206,8 +189,7 @@ export function registerRoutes(app: Express): Server {
         console.log('Calculated driving distance:', {
           kilometers,
           distanceText: data.rows[0].elements[0].distance.text,
-          destination: data.destination_addresses[0],
-          rawDistance: distanceInMeters
+          destination: data.destination_addresses[0]
         });
 
         res.json({ distance: kilometers });
@@ -216,7 +198,7 @@ export function registerRoutes(app: Express): Server {
           status: data.status,
           elementStatus: data.rows?.[0]?.elements?.[0]?.status,
           coordinates: `${latitude},${longitude}`,
-          fullResponse: JSON.stringify(data)
+          error: data.error_message
         });
         throw new Error(`Could not calculate distance to coordinates ${latitude},${longitude}`);
       }

@@ -146,10 +146,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Custom Area Calculator */}
+          {/* Custom Area Section - Removed "Calculator" */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label className="block mb-2 text-xl font-medium">Custom Area Calculator</Label>
+              <Label className="block mb-2 text-xl font-medium">Custom Area</Label>
               <div className="flex items-center gap-4 justify-center">
                 <Input
                   type="text"
@@ -203,12 +203,13 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
                 <TableCell className="text-base text-center pr-8">$1.75</TableCell>
               </TableRow>
+              {/* Modified Table Rows */}
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Required Pellets</TableCell>
-                <TableCell className="text-base text-center pr-8">{formatNumber(requiredProduct)} lbs</TableCell>
+                <TableCell className="font-medium text-base text-center">Pellets</TableCell>
+                <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Tote Bags Required</TableCell>
+                <TableCell className="font-medium text-base text-center">Tote Bags</TableCell>
                 <TableCell className="text-base text-center pr-8">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
@@ -326,8 +327,9 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
+              {/* Changed "Estimated Delivery Cost" to "Estimated Delivery" */}
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Estimated Delivery Cost</TableCell>
+                <TableCell className="font-bold text-xl text-center">Estimated Delivery</TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">

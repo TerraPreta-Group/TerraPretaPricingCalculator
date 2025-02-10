@@ -12,6 +12,7 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
     if (typeof destination === 'string') {
       // Town name lookup
       apiEndpoint = `/api/distance/${encodeURIComponent(destination)}`;
+      console.log('Calculating distance for town:', destination);
     } else {
       // LSD coordinates
       const coords = lsdToLatLong(destination);
@@ -19,6 +20,7 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
       console.log('Converted LSD coordinates:', coords);
 
       if (!coords) {
+        console.error('Failed to convert LSD coordinates:', destination);
         throw new Error('Invalid LSD coordinates');
       }
 
@@ -30,18 +32,14 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
       }
 
       apiEndpoint = `/api/distance/coordinates/${coords.lat.toFixed(6)}/${coords.lng.toFixed(6)}`;
+      console.log('Using coordinates endpoint:', apiEndpoint);
     }
 
-    console.log('Calling distance API endpoint:', {
-      endpoint: apiEndpoint,
-      inputType: typeof destination === 'string' ? 'town' : 'lsd',
-      coordinates: typeof destination === 'string' ? null : lsdToLatLong(destination)
-    });
     const response = await fetch(apiEndpoint, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache, no-store'
       }
     });
 
@@ -55,7 +53,15 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
     }
 
     const data = await response.json();
-    console.log("Distance API response:", data);
+    console.log('Distance API response:', {
+      endpoint: apiEndpoint,
+      response: data
+    });
+
+    if ('error' in data) {
+      console.error('Distance API returned error:', data.error);
+      throw new Error(data.error);
+    }
 
     const { distance } = distanceResponseSchema.parse(data);
     return distance;
