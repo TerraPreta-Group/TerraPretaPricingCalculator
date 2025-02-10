@@ -232,7 +232,7 @@ export default function Home() {
                           <span className="text-muted-foreground">Calculating distance...</span>
                         ) : deliveryDistance ? (
                           <>
-                            <span>{formatNumber(parseFloat(deliveryDistance))} km</span>
+                            <span>{Math.round(parseFloat(deliveryDistance))} km</span>
                             <span>× $1.50 per km</span>
                           </>
                         ) : (

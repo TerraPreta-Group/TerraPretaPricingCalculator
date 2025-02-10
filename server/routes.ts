@@ -98,7 +98,7 @@ export function registerRoutes(app: Express): Server {
         data.rows[0]?.elements[0]?.status === "OK"
       ) {
         const distanceInMeters = data.rows[0].elements[0].distance.value;
-        const kilometers = distanceInMeters / 1000;
+        const kilometers = Math.round(distanceInMeters / 1000); // Round to nearest km
         res.json({ distance: kilometers });
       } else {
         throw new Error("Could not calculate distance");
