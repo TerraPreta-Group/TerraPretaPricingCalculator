@@ -55,11 +55,7 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
     }
 
     const data = await response.json();
-    console.log("Distance API response:", {
-      data,
-      endpoint: apiEndpoint,
-      inputLocation: destination
-    });
+    console.log("Distance API response:", data);
 
     const { distance } = distanceResponseSchema.parse(data);
     return distance;

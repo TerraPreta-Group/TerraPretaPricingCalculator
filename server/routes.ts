@@ -133,8 +133,8 @@ export function registerRoutes(app: Express): Server {
       const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Sundre, AB coordinates
 
       // Parse and validate coordinates
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lng);
+      const latitude = Number(lat);
+      const longitude = Number(lng);
 
       if (isNaN(latitude) || isNaN(longitude)) {
         throw new Error('Invalid coordinates provided');
@@ -156,8 +156,13 @@ export function registerRoutes(app: Express): Server {
         throw new Error("Google Maps API key is not configured");
       }
 
-      // Use Distance Matrix API for more accurate straight-line distance
-      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&mode=driving&units=metric&key=${apiKey}`;
+      // Use Distance Matrix API for more accurate driving distance
+      const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json');
+      url.searchParams.append('origins', `${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}`);
+      url.searchParams.append('destinations', `${latitude},${longitude}`);
+      url.searchParams.append('mode', 'driving');
+      url.searchParams.append('units', 'metric');
+      url.searchParams.append('key', apiKey);
 
       console.log('Making Distance Matrix API request:', {
         from: {
@@ -169,14 +174,14 @@ export function registerRoutes(app: Express): Server {
           lat: latitude,
           lng: longitude
         },
-        url: url.replace(apiKey, 'REDACTED')
+        url: url.toString().replace(apiKey, 'REDACTED')
       });
 
-      const response = await fetch(url, {
+      const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store'
         }
       });
 
