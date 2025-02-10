@@ -131,7 +131,7 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
     try {
       const { lat, lng } = req.params;
-      const SUNDRE_COORDS = { lat: 51.7971, lng: -114.6406 }; // Sundre, AB coordinates
+      const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Updated Sundre, AB coordinates based on Google Maps
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
       if (!apiKey) {
