@@ -20,6 +20,8 @@ import {
   type UnitType,
 } from "@/lib/calculator";
 import { calculateDistance } from "@/lib/distance";
+import { LSDSelector } from "@/components/ui/lsd-selector";
+import { formatLSDLocation } from "@/lib/lsd";
 
 const calculateToteBags = (requiredProduct: number): number => {
   return Math.ceil(requiredProduct / 1000);
@@ -40,6 +42,14 @@ export default function Home() {
   const [deliveryLocation, setDeliveryLocation] = useState<string>("");
   const [deliveryDistance, setDeliveryDistance] = useState<string>("");
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
+  const [locationType, setLocationType] = useState<"town" | "lsd">("town");
+  const [lsdCoords, setLsdCoords] = useState({
+    lsd: "",
+    section: "",
+    township: "",
+    range: "",
+    meridian: "W5"
+  });
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -61,10 +71,9 @@ export default function Home() {
     }
   };
 
-  // Debounce the distance calculation
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (deliveryLocation.trim()) {
+      if (locationType === "town" && deliveryLocation.trim()) {
         setIsCalculatingDistance(true);
         try {
           const distance = await calculateDistance(deliveryLocation.trim());
@@ -73,13 +82,24 @@ export default function Home() {
           console.error("Failed to calculate distance:", error);
         }
         setIsCalculatingDistance(false);
+      } else if (locationType === "lsd" &&
+        lsdCoords.lsd && lsdCoords.section &&
+        lsdCoords.township && lsdCoords.range) {
+        setIsCalculatingDistance(true);
+        try {
+          const distance = await calculateDistance(formatLSDLocation(lsdCoords)); // Assuming formatLSDLocation exists
+          setDeliveryDistance(distance.toString());
+        } catch (error) {
+          console.error("Failed to calculate distance:", error);
+        }
+        setIsCalculatingDistance(false);
       } else {
         setDeliveryDistance("");
       }
-    }, 1000); // Wait 1 second after user stops typing
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [deliveryLocation]);
+  }, [deliveryLocation, locationType, lsdCoords]);
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
@@ -218,30 +238,68 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
-                  <div className="space-y-2 pr-8">
-                    <Input
-                      type="text"
-                      value={deliveryLocation}
-                      onChange={(e) => setDeliveryLocation(e.target.value)}
-                      placeholder="Enter town name (e.g., Hanna, AB)"
-                      className="w-full"
-                    />
-                    <div className="flex items-center gap-2 justify-center text-sm">
-                      {deliveryLocation ? (
-                        isCalculatingDistance ? (
-                          <span className="text-muted-foreground">Calculating distance...</span>
-                        ) : deliveryDistance ? (
-                          <>
-                            <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                            <span>× $1.50 per km</span>
-                          </>
-                        ) : (
-                          <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
-                        )
-                      ) : (
-                        <span className="text-muted-foreground">Enter a location to calculate distance</span>
-                      )}
+                  <div className="space-y-4 pr-8">
+                    <div className="flex justify-center gap-4">
+                      <Button
+                        variant={locationType === "town" ? "default" : "outline"}
+                        onClick={() => setLocationType("town")}
+                      >
+                        Town Name
+                      </Button>
+                      <Button
+                        variant={locationType === "lsd" ? "default" : "outline"}
+                        onClick={() => setLocationType("lsd")}
+                      >
+                        LSD Location
+                      </Button>
                     </div>
+
+                    {locationType === "town" ? (
+                      <div className="space-y-2">
+                        <Input
+                          type="text"
+                          value={deliveryLocation}
+                          onChange={(e) => setDeliveryLocation(e.target.value)}
+                          placeholder="Enter town name (e.g., Hanna, AB)"
+                          className="w-full"
+                        />
+                        <div className="flex items-center gap-2 justify-center text-sm">
+                          {deliveryLocation ? (
+                            isCalculatingDistance ? (
+                              <span className="text-muted-foreground">Calculating distance...</span>
+                            ) : deliveryDistance ? (
+                              <>
+                                <span>{Math.round(parseFloat(deliveryDistance))} km</span>
+                                <span>× $1.50 per km</span>
+                              </>
+                            ) : (
+                              <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
+                            )
+                          ) : (
+                            <span className="text-muted-foreground">Enter a location to calculate distance</span>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <LSDSelector
+                          value={lsdCoords}
+                          onChange={setLsdCoords}
+                        />
+                        <div className="flex items-center gap-2 justify-center text-sm">
+                          {isCalculatingDistance ? (
+                            <span className="text-muted-foreground">Calculating distance...</span>
+                          ) : deliveryDistance ? (
+                            <>
+                              <span>{Math.round(parseFloat(deliveryDistance))} km</span>
+                              <span>× $1.50 per km</span>
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground">Select all LSD values to calculate distance</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

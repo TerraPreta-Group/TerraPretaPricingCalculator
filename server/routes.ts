@@ -127,6 +127,48 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Add new endpoint for coordinate-based distance calculation
+  app.get("/api/distance/coordinates/:lat/:lng", async (req: Request, res: Response) => {
+    try {
+      const { lat, lng } = req.params;
+      const SUNDRE_COORDS = { lat: 51.7971, lng: -114.6406 }; // Sundre, AB coordinates
+      const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+      if (!apiKey) {
+        throw new Error("Google Maps API key is not configured");
+      }
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${lat},${lng}&key=${apiKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Distance API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
+        const distanceInMeters = data.rows[0].elements[0].distance.value;
+        const kilometers = Math.round(distanceInMeters / 1000);
+        res.json({ distance: kilometers });
+      } else {
+        console.error("Distance calculation failed:", {
+          status: data.status,
+          elementStatus: data.rows[0]?.elements[0]?.status,
+          coordinates: `${lat},${lng}`
+        });
+        throw new Error(`Could not calculate distance to coordinates ${lat},${lng}`);
+      }
+    } catch (error) {
+      console.error("Distance calculation error:", error);
+      res.status(500).json({
+        message: "Failed to calculate distance",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

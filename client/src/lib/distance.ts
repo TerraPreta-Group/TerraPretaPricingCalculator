@@ -1,14 +1,27 @@
 import { z } from "zod";
+import { type LSDCoordinates, lsdToLatLong } from "./lsd";
 
 const distanceResponseSchema = z.object({
   distance: z.number(),
 });
 
-export async function calculateDistance(destination: string): Promise<number> {
+export async function calculateDistance(destination: string | LSDCoordinates): Promise<number> {
   try {
-    const response = await fetch(
-      `/api/distance/${encodeURIComponent(destination)}`
-    );
+    let apiEndpoint: string;
+
+    if (typeof destination === 'string') {
+      // Town name lookup
+      apiEndpoint = `/api/distance/${encodeURIComponent(destination)}`;
+    } else {
+      // LSD coordinates
+      const coords = lsdToLatLong(destination);
+      if (!coords) {
+        throw new Error('Invalid LSD coordinates');
+      }
+      apiEndpoint = `/api/distance/coordinates/${coords.lat}/${coords.lng}`;
+    }
+
+    const response = await fetch(apiEndpoint);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
