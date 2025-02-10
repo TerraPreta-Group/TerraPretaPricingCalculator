@@ -94,7 +94,8 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     });
 
     // Validate final coordinates are within Alberta bounds
-    if (finalLat < 49 || finalLat > 60 || finalLng < -120 || finalLng > -110) {
+    if (finalLat < 49 || finalLat > 60 || 
+        finalLng < -120 || finalLng > -110) {
       console.error('Calculated coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
       return null;
     }
