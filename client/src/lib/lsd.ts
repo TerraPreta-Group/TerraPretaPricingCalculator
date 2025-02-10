@@ -72,13 +72,24 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     }
 
     // Calculate section offset within township (6x6 grid)
-    const sectionOffset = ((section - 1) % 6) * (adjustedRangeWidth / 6);
+    const sectionRow = Math.ceil(section / 6) - 1;
+    const sectionCol = (section - 1) % 6;
+    const sectionOffset = {
+      lng: sectionCol * (adjustedRangeWidth / 6),
+      lat: -(sectionRow * (TOWNSHIP_HEIGHT / 6))
+    };
 
     // Calculate LSD offset within section (4x4 grid)
-    const lsdOffset = ((lsd - 1) % 4) * (adjustedRangeWidth / 24);
+    const lsdRow = Math.ceil(lsd / 4) - 1;
+    const lsdCol = (lsd - 1) % 4;
+    const lsdOffset = {
+      lng: lsdCol * (adjustedRangeWidth / 24),
+      lat: -(lsdRow * (TOWNSHIP_HEIGHT / 24))
+    };
 
-    // Calculate final longitude
-    const finalLng = base.lng + rangeOffset + sectionOffset + lsdOffset;
+    // Calculate final coordinates
+    const finalLng = base.lng + rangeOffset + sectionOffset.lng + lsdOffset.lng;
+    const finalLatWithOffsets = finalLat + sectionOffset.lat + lsdOffset.lat;
 
     console.log('LSD Coordinate Calculation:', {
       input: coords,
@@ -89,17 +100,18 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
         section: sectionOffset,
         lsd: lsdOffset
       },
-      result: { lat: finalLat, lng: finalLng }
+      result: { lat: finalLatWithOffsets, lng: finalLng }
     });
 
     // Validate final coordinates are within Alberta's bounds
-    if (finalLat < ALBERTA_BOUNDS.lat.min || finalLat > ALBERTA_BOUNDS.lat.max || 
+    if (finalLatWithOffsets < ALBERTA_BOUNDS.lat.min || finalLatWithOffsets > ALBERTA_BOUNDS.lat.max || 
         finalLng < ALBERTA_BOUNDS.lng.min || finalLng > ALBERTA_BOUNDS.lng.max) {
-      console.error('Calculated coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
+      console.error('Calculated coordinates outside Alberta bounds:', 
+        { lat: finalLatWithOffsets, lng: finalLng });
       return null;
     }
 
-    return { lat: finalLat, lng: finalLng };
+    return { lat: finalLatWithOffsets, lng: finalLng };
   } catch (error) {
     console.error('Error converting LSD coordinates:', error);
     return null;
