@@ -22,6 +22,7 @@ import {
 import { calculateDistance } from "@/lib/distance";
 import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
+import { lsdToLatLong } from "@/lib/lsd"; // Added import
 
 const calculateToteBags = (requiredProduct: number): number => {
   return Math.ceil(requiredProduct / 1000);
@@ -286,16 +287,38 @@ export default function Home() {
                           value={lsdCoords}
                           onChange={setLsdCoords}
                         />
-                        <div className="flex items-center gap-2 justify-center text-sm">
+                        <div className="flex flex-col items-center gap-2 justify-center text-sm"> {/* Modified div */}
                           {isCalculatingDistance ? (
                             <span className="text-muted-foreground">Calculating distance...</span>
-                          ) : deliveryDistance ? (
-                            <>
-                              <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                              <span>× $1.50 per km</span>
-                            </>
                           ) : (
-                            <span className="text-muted-foreground">Select all LSD values to calculate distance</span>
+                            <>
+                              {lsdCoords.lsd && lsdCoords.section && lsdCoords.township && lsdCoords.range && (
+                                <div className="text-muted-foreground">
+                                  {(() => {
+                                    const coords = lsdToLatLong(lsdCoords);
+                                    return coords ? (
+                                      <span>
+                                        Calculated coordinates: {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
+                                      </span>
+                                    ) : (
+                                      <span className="text-red-500">
+                                        Invalid coordinates - please check LSD values
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+                              {deliveryDistance ? (
+                                <div className="flex gap-2 items-center">
+                                  <span>{Math.round(parseFloat(deliveryDistance))} km</span>
+                                  <span>× $1.50 per km</span>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">
+                                  Select all LSD values to calculate distance
+                                </span>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
