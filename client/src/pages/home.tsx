@@ -20,8 +20,6 @@ import {
   type UnitType,
 } from "@/lib/calculator";
 import { calculateDistance } from "@/lib/distance";
-import { Combobox } from "@/components/ui/combobox";
-
 
 const calculateToteBags = (requiredProduct: number): number => {
   return Math.ceil(requiredProduct / 1000);
@@ -31,44 +29,6 @@ const calculateDeliveryCost = (distance: number): number => {
   return distance * 1.5; // $1.50 per km
 };
 
-type Town = {
-  value: string;
-  label: string;
-};
-
-const ALBERTA_TOWNS: Town[] = [
-  { value: "airdrie", label: "Airdrie, AB" },
-  { value: "banff", label: "Banff, AB" },
-  { value: "beaumont", label: "Beaumont, AB" },
-  { value: "brooks", label: "Brooks, AB" },
-  { value: "calgary", label: "Calgary, AB" },
-  { value: "camrose", label: "Camrose, AB" },
-  { value: "canmore", label: "Canmore, AB" },
-  { value: "chestermere", label: "Chestermere, AB" },
-  { value: "cold-lake", label: "Cold Lake, AB" },
-  { value: "edmonton", label: "Edmonton, AB" },
-  { value: "fort-mcmurray", label: "Fort McMurray, AB" },
-  { value: "fort-saskatchewan", label: "Fort Saskatchewan, AB" },
-  { value: "grande-prairie", label: "Grande Prairie, AB" },
-  { value: "high-river", label: "High River, AB" },
-  { value: "hinton", label: "Hinton, AB" },
-  { value: "lacombe", label: "Lacombe, AB" },
-  { value: "leduc", label: "Leduc, AB" },
-  { value: "lethbridge", label: "Lethbridge, AB" },
-  { value: "lloydminster", label: "Lloydminster, AB" },
-  { value: "medicine-hat", label: "Medicine Hat, AB" },
-  { value: "morinville", label: "Morinville, AB" },
-  { value: "okotoks", label: "Okotoks, AB" },
-  { value: "olds", label: "Olds, AB" },
-  { value: "red-deer", label: "Red Deer, AB" },
-  { value: "spruce-grove", label: "Spruce Grove, AB" },
-  { value: "st-albert", label: "St. Albert, AB" },
-  { value: "stony-plain", label: "Stony Plain, AB" },
-  { value: "strathmore", label: "Strathmore, AB" },
-  { value: "wetaskiwin", label: "Wetaskiwin, AB" },
-  { value: "whitecourt", label: "Whitecourt, AB" }
-];
-
 export default function Home() {
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
@@ -77,8 +37,9 @@ export default function Home() {
   const [customArea, setCustomArea] = useState<string>("");
   const [customUnit, setCustomUnit] = useState<UnitType>("acre");
   const [pickup, setPickup] = useState<string>("no");
+  const [deliveryLocation, setDeliveryLocation] = useState<string>("");
   const [deliveryDistance, setDeliveryDistance] = useState<string>("");
-  const [selectedTown, setSelectedTown] = useState<string>("");
+  const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -100,25 +61,25 @@ export default function Home() {
     }
   };
 
-  const handleDeliveryDistanceChange = (value: string) => {
-    if (value === "" || /^\d*\.?\d*$/.test(value)) {
-      setDeliveryDistance(value);
-    }
-  };
-
+  // Debounce the distance calculation
   useEffect(() => {
-    async function updateDistance() {
-      if (selectedTown) {
-        const town = ALBERTA_TOWNS.find(t => t.value === selectedTown);
-        if (town) {
-          const distance = await calculateDistance(town.label);
+    const timer = setTimeout(async () => {
+      if (deliveryLocation.trim()) {
+        setIsCalculatingDistance(true);
+        try {
+          const distance = await calculateDistance(deliveryLocation.trim());
           setDeliveryDistance(distance.toString());
+        } catch (error) {
+          console.error("Failed to calculate distance:", error);
         }
+        setIsCalculatingDistance(false);
+      } else {
+        setDeliveryDistance("");
       }
-    }
-    updateDistance();
-  }, [selectedTown]);
+    }, 1000); // Wait 1 second after user stops typing
 
+    return () => clearTimeout(timer);
+  }, [deliveryLocation]);
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
@@ -258,24 +219,27 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
                   <div className="space-y-2">
-                    <Combobox
-                      options={ALBERTA_TOWNS}
-                      value={selectedTown}
-                      onValueChange={setSelectedTown}
-                      placeholder="Select nearest town"
+                    <Input
+                      type="text"
+                      value={deliveryLocation}
+                      onChange={(e) => setDeliveryLocation(e.target.value)}
+                      placeholder="Enter town or location..."
+                      className="w-full"
                     />
                     <div className="flex items-center gap-2 justify-end text-sm">
-                      {selectedTown ? (
-                        deliveryDistance ? (
+                      {deliveryLocation ? (
+                        isCalculatingDistance ? (
+                          <span className="text-muted-foreground">Calculating distance...</span>
+                        ) : deliveryDistance ? (
                           <>
                             <span>{formatNumber(parseFloat(deliveryDistance))} km</span>
                             <span>× $1.50 per km</span>
                           </>
                         ) : (
-                          <span className="text-muted-foreground">Calculating distance...</span>
+                          <span className="text-muted-foreground">Enter a valid location</span>
                         )
                       ) : (
-                        <span className="text-muted-foreground">Select a town to calculate distance</span>
+                        <span className="text-muted-foreground">Enter a location to calculate distance</span>
                       )}
                     </div>
                   </div>
@@ -307,7 +271,7 @@ export default function Home() {
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            All calculations are automatically converted to acres.  Note: 1 hectare is approximately 2.47 acres.
+            All calculations are automatically converted to acres. Note: 1 hectare is approximately 2.47 acres.
           </p>
 
         </CardContent>
