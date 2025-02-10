@@ -2,30 +2,22 @@ import { z } from "zod";
 
 // Constants for the Alberta Township System (ATS)
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
-const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
+const RANGE_WIDTH = 0.1428571; // Degrees longitude per range (approximately 6 miles at 49°N)
 
-// Alberta bounds (adjusted for complete coverage)
+// Alberta bounds
 const ALBERTA_BOUNDS = {
-  lat: { min: 48.9, max: 60.1 },
-  lng: { min: -120.1, max: -109.0 }  // Adjusted to include all of W4 territory
-};
-
-// Base coordinates for meridians in Alberta (adjusted for accuracy)
-const meridianBase = {
-  'W4': { lat: 49.0, lng: -110.0 }, // Fourth Meridian (AB/SK border)
-  'W5': { lat: 49.0, lng: -114.0 }, // Fifth Meridian
-  'W6': { lat: 49.0, lng: -118.0 }  // Sixth Meridian
+  lat: { min: 49.0, max: 60.0 },
+  lng: { min: -120.0, max: -110.0 }
 };
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
   try {
-    console.log("Converting LSD coordinates:", coords);
-
     // Parse and validate inputs
     const township = parseInt(coords.township);
     const range = parseInt(coords.range);
     const section = parseInt(coords.section);
     const lsd = parseInt(coords.lsd);
+    const meridian = coords.meridian;
 
     // Validate input ranges
     if (isNaN(township) || township < 1 || township > 126 ||
@@ -36,82 +28,90 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       return null;
     }
 
-    if (!meridianBase[coords.meridian as keyof typeof meridianBase]) {
-      console.error('Invalid meridian:', coords.meridian);
-      return null;
-    }
+    // Calculate latitude based on township, section, and LSD
+    const baseLat = 49.0;
+    const latFromTownship = baseLat + ((township - 1) * TOWNSHIP_HEIGHT);
+    const sectionRow = Math.floor((section - 1) / 6);
+    const lsdRow = Math.floor((lsd - 1) / 4);
+    const finalLat = latFromTownship - 
+                     (sectionRow * (TOWNSHIP_HEIGHT / 6)) - 
+                     (lsdRow * (TOWNSHIP_HEIGHT / 24));
 
-    // Get base coordinates for the specified meridian
-    const base = meridianBase[coords.meridian as keyof typeof meridianBase];
+    // Calculate longitude based on meridian and range
+    let baseLng;
+    let rangeDirection;
 
-    // Calculate township offset (moving north)
-    const townshipOffset = (township - 1) * TOWNSHIP_HEIGHT;
-    const finalLat = base.lat + townshipOffset;
-
-    // Adjust range width based on latitude (gets narrower as you go north)
-    const latitudeFactor = Math.cos(finalLat * Math.PI / 180);
-    const adjustedRangeWidth = RANGE_WIDTH_BASE * latitudeFactor;
-
-    // Calculate range offset based on meridian
-    let rangeOffset = 0;
-    switch (coords.meridian) {
+    switch (meridian) {
       case 'W4':
-        // Ranges increase westward from 110°W
-        rangeOffset = (range - 1) * adjustedRangeWidth;
+        baseLng = -110.0;
+        rangeDirection = 1;  // Ranges increase westward
         break;
       case 'W5':
-        // Ranges increase both ways from 114°W
-        rangeOffset = range <= 17 
-          ? -(range - 1) * adjustedRangeWidth  // East of W5
-          : (range - 17) * adjustedRangeWidth; // West of W5
+        baseLng = -114.0;
+        // For W5: Ranges 1-17 go east, 18+ go west
+        rangeDirection = range <= 17 ? -1 : 1;
         break;
       case 'W6':
-        // Ranges increase eastward from 118°W
-        rangeOffset = -(range - 1) * adjustedRangeWidth;
+        baseLng = -118.0;
+        rangeDirection = -1;  // Ranges increase eastward
         break;
+      default:
+        console.error('Invalid meridian:', meridian);
+        return null;
     }
 
-    // Calculate section offset within township (6x6 grid)
-    const sectionRow = Math.ceil(section / 6) - 1;
-    const sectionCol = (section - 1) % 6;
-    const sectionOffset = {
-      lng: sectionCol * (adjustedRangeWidth / 6),
-      lat: -(sectionRow * (TOWNSHIP_HEIGHT / 6))
-    };
+    // Apply latitude correction factor to range width
+    const latCorrection = Math.cos(finalLat * Math.PI / 180);
+    const adjustedRangeWidth = RANGE_WIDTH * latCorrection;
 
-    // Calculate LSD offset within section (4x4 grid)
-    const lsdRow = Math.ceil(lsd / 4) - 1;
-    const lsdCol = (lsd - 1) % 4;
-    const lsdOffset = {
-      lng: lsdCol * (adjustedRangeWidth / 24),
-      lat: -(lsdRow * (TOWNSHIP_HEIGHT / 24))
-    };
+    // Calculate range offset
+    let rangeOffset;
+    if (meridian === 'W5' && range > 17) {
+      // Special handling for ranges west of W5
+      rangeOffset = (range - 17) * adjustedRangeWidth;
+    } else {
+      rangeOffset = (range - 1) * adjustedRangeWidth * rangeDirection;
+    }
 
-    // Calculate final coordinates
-    const finalLng = base.lng + rangeOffset + sectionOffset.lng + lsdOffset.lng;
-    const finalLatWithOffsets = finalLat + sectionOffset.lat + lsdOffset.lat;
+    // Calculate section and LSD offsets for longitude
+    const sectionCol = ((section - 1) % 6);
+    const lsdCol = ((lsd - 1) % 4);
+    const sectionLngOffset = (sectionCol * adjustedRangeWidth / 6);
+    const lsdLngOffset = (lsdCol * adjustedRangeWidth / 24);
 
-    console.log('LSD Coordinate Calculation:', {
+    // Calculate final longitude
+    const finalLng = baseLng + rangeOffset + 
+                    (rangeDirection * (sectionLngOffset + lsdLngOffset));
+
+    // Debug logging
+    console.log('LSD Calculation Details:', {
       input: coords,
-      base,
-      offsets: {
-        township: townshipOffset,
-        range: rangeOffset,
-        section: sectionOffset,
-        lsd: lsdOffset
+      baseCoordinates: { lat: baseLat, lng: baseLng },
+      latitudeCalculation: {
+        fromTownship: latFromTownship,
+        sectionOffset: sectionRow * (TOWNSHIP_HEIGHT / 6),
+        lsdOffset: lsdRow * (TOWNSHIP_HEIGHT / 24),
+        final: finalLat
       },
-      result: { lat: finalLatWithOffsets, lng: finalLng }
+      longitudeCalculation: {
+        rangeDirection,
+        latCorrection,
+        adjustedRangeWidth,
+        rangeOffset,
+        sectionOffset: sectionLngOffset,
+        lsdOffset: lsdLngOffset,
+        final: finalLng
+      }
     });
 
-    // Validate final coordinates are within Alberta's bounds
-    if (finalLatWithOffsets < ALBERTA_BOUNDS.lat.min || finalLatWithOffsets > ALBERTA_BOUNDS.lat.max || 
+    // Validate coordinates
+    if (finalLat < ALBERTA_BOUNDS.lat.min || finalLat > ALBERTA_BOUNDS.lat.max ||
         finalLng < ALBERTA_BOUNDS.lng.min || finalLng > ALBERTA_BOUNDS.lng.max) {
-      console.error('Calculated coordinates outside Alberta bounds:', 
-        { lat: finalLatWithOffsets, lng: finalLng });
+      console.error('Coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
       return null;
     }
 
-    return { lat: finalLatWithOffsets, lng: finalLng };
+    return { lat: finalLat, lng: finalLng };
   } catch (error) {
     console.error('Error converting LSD coordinates:', error);
     return null;
