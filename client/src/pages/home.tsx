@@ -209,16 +209,15 @@ export default function Home() {
                       placeholder="Distance"
                       className="w-[80px]"
                     />
-                    <span>x $1.50 per km =</span>
-                    <span className="font-bold">${formatNumber(deliveryCost)}</span>
+                    <span>x $1.50 per km</span>
                   </div>
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow className="bg-green-100"> {/* Changed background color for Cost of Delivery */}
                 <TableCell className="font-medium text-center">Cost of Delivery</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
-              <TableRow className="bg-primary/10">
+              <TableRow className="bg-slate-100"> {/* Changed background color for Total Cost */}
                 <TableCell className="font-bold text-lg text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
