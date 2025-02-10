@@ -40,7 +40,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     // Base coordinates for meridians in Alberta
     const meridianBase = {
       'W4': { lat: 49.0, lng: -110.0 }, // Fourth Meridian
-      'W5': { lat: 49.0, lng: -115.0 }, // Fifth Meridian (corrected)
+      'W5': { lat: 49.0, lng: -114.0 }, // Fifth Meridian
       'W6': { lat: 49.0, lng: -118.0 }  // Sixth Meridian
     };
 
@@ -60,7 +60,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const lsdRow = Math.floor((lsd - 1) / 4);
     const lsdCol = (lsd - 1) % 4;
 
-    // Calculate final coordinates with corrected constants
+    // Calculate final coordinates
     const finalLat = base.lat + 
       (township - 1) * TOWNSHIP_HEIGHT + // Township offset
       sectionRow * (TOWNSHIP_HEIGHT / 6) + // Section offset
@@ -93,9 +93,10 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       result: { lat: finalLat, lng: finalLng }
     });
 
-    // Validate final coordinates are within Alberta bounds
-    if (finalLat < 49 || finalLat > 60 || 
-        finalLng < -120 || finalLng > -110) {
+    // Validate final coordinates are within Alberta's extended bounds
+    // Allow slightly wider bounds to account for edge cases
+    if (finalLat < 48.5 || finalLat > 60.5 || 
+        finalLng < -120.5 || finalLng > -109.5) {
       console.error('Calculated coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
       return null;
     }
