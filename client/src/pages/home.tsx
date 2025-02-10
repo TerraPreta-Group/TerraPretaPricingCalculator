@@ -145,23 +145,23 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Recommended Application Rate</TableCell>
+                <TableCell className="font-medium text-center">Recommended Application Rate</TableCell>
                 <TableCell className="text-lg">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Cost per lb</TableCell>
+                <TableCell className="font-medium text-center">Cost per lb</TableCell>
                 <TableCell className="text-lg">$1.75</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
-                <TableCell className="font-medium">Required Pellets</TableCell>
+                <TableCell className="font-medium text-center">Required Pellets</TableCell>
                 <TableCell className="text-lg">{formatNumber(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
-                <TableCell className="font-medium">Tote Bags Required</TableCell>
+                <TableCell className="font-medium text-center">Tote Bags Required</TableCell>
                 <TableCell className="text-lg">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
               <TableRow className="bg-primary/10 py-2">
-                <TableCell className="font-bold text-lg">Total Cost</TableCell>
+                <TableCell className="font-bold text-lg text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
             </TableBody>
