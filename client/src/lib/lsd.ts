@@ -4,10 +4,10 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH = 0.1428571; // Degrees longitude per range (approximately 6 miles at 49°N)
 
-// Alberta bounds
+// Alberta bounds (adjusted for complete coverage)
 const ALBERTA_BOUNDS = {
   lat: { min: 49.0, max: 60.0 },
-  lng: { min: -120.0, max: -110.0 }
+  lng: { min: -120.0, max: -109.0 }  // Expanded to include all W4 territory
 };
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
@@ -28,7 +28,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       return null;
     }
 
-    // Calculate latitude based on township, section, and LSD
+    // Calculate latitude based on township (same calculation for all meridians)
     const baseLat = 49.0;
     const latFromTownship = baseLat + ((township - 1) * TOWNSHIP_HEIGHT);
     const sectionRow = Math.floor((section - 1) / 6);
@@ -37,45 +37,45 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
                      (sectionRow * (TOWNSHIP_HEIGHT / 6)) - 
                      (lsdRow * (TOWNSHIP_HEIGHT / 24));
 
-    // Calculate longitude based on meridian and range
+    // Apply latitude correction to range width (ranges get narrower as you go north)
+    const latCorrection = Math.cos(finalLat * Math.PI / 180);
+    const adjustedRangeWidth = RANGE_WIDTH * latCorrection;
+
+    // Set up meridian-specific calculations
     let baseLng;
-    let rangeDirection;
+    let rangeOffset;
 
     switch (meridian) {
       case 'W4':
         baseLng = -110.0;
-        rangeDirection = 1;  // Ranges increase westward
+        // Always west from W4
+        rangeOffset = (range - 1) * adjustedRangeWidth;
         break;
       case 'W5':
         baseLng = -114.0;
-        // For W5: Ranges 1-17 go east, 18+ go west
-        rangeDirection = range <= 17 ? -1 : 1;
+        // East for ranges 1-17, West for 18+
+        if (range <= 17) {
+          rangeOffset = -(range - 1) * adjustedRangeWidth;  // East
+        } else {
+          rangeOffset = (range - 17) * adjustedRangeWidth;  // West
+        }
         break;
       case 'W6':
         baseLng = -118.0;
-        rangeDirection = -1;  // Ranges increase eastward
+        // Always east from W6
+        rangeOffset = -(range - 1) * adjustedRangeWidth;
         break;
       default:
         console.error('Invalid meridian:', meridian);
         return null;
     }
 
-    // Apply latitude correction factor to range width
-    const latCorrection = Math.cos(finalLat * Math.PI / 180);
-    const adjustedRangeWidth = RANGE_WIDTH * latCorrection;
-
-    // Calculate range offset
-    let rangeOffset;
-    if (meridian === 'W5' && range > 17) {
-      // Special handling for ranges west of W5
-      rangeOffset = (range - 17) * adjustedRangeWidth;
-    } else {
-      rangeOffset = (range - 1) * adjustedRangeWidth * rangeDirection;
-    }
-
-    // Calculate section and LSD offsets for longitude
+    // Calculate section and LSD offsets
     const sectionCol = ((section - 1) % 6);
     const lsdCol = ((lsd - 1) % 4);
+
+    // Direction of the offset should match the range direction
+    const rangeDirection = meridian === 'W4' || (meridian === 'W5' && range > 17) ? 1 : -1;
     const sectionLngOffset = (sectionCol * adjustedRangeWidth / 6);
     const lsdLngOffset = (lsdCol * adjustedRangeWidth / 24);
 
@@ -104,7 +104,7 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
       }
     });
 
-    // Validate coordinates
+    // Validate coordinates are within Alberta bounds
     if (finalLat < ALBERTA_BOUNDS.lat.min || finalLat > ALBERTA_BOUNDS.lat.max ||
         finalLng < ALBERTA_BOUNDS.lng.min || finalLng > ALBERTA_BOUNDS.lng.max) {
       console.error('Coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
