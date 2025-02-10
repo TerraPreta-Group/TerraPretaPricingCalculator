@@ -4,6 +4,12 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH_BASE = 0.125; // Base width at 49°N (gets narrower as you go north)
 
+// Alberta bounds (adjusted to be more inclusive of border areas)
+const ALBERTA_BOUNDS = {
+  lat: { min: 48.9, max: 60.1 },
+  lng: { min: -120.1, max: -109.9 }
+};
+
 // Base coordinates for meridians in Alberta (adjusted for accuracy)
 const meridianBase = {
   'W4': { lat: 49.0, lng: -110.0}, // Fourth Meridian
@@ -46,15 +52,14 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const lsdRow = Math.floor((lsd - 1) / 4);
     const lsdCol = (lsd - 1) % 4;
 
-    // Calculate latitude
-    const finalLat = base.lat + 
-      (township - 1) * TOWNSHIP_HEIGHT;
+    // Calculate latitude with township offset
+    const finalLat = base.lat + (township - 1) * TOWNSHIP_HEIGHT;
 
     // Adjust range width based on latitude (gets narrower as you go north)
     const latitudeFactor = Math.cos(finalLat * Math.PI / 180);
     const adjustedRangeWidth = RANGE_WIDTH_BASE * latitudeFactor;
 
-    // Calculate longitude with corrections
+    // Calculate longitude with range, section, and LSD offsets
     const finalLng = base.lng + 
       (range - 1) * adjustedRangeWidth + // Range offset
       (sectionCol / 6) * adjustedRangeWidth + // Section offset
@@ -85,8 +90,8 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     });
 
     // Validate final coordinates are within Alberta's bounds
-    if (finalLat < 48.5 || finalLat > 60.5 || 
-        finalLng < -120.5 || finalLng > -109.5) {
+    if (finalLat < ALBERTA_BOUNDS.lat.min || finalLat > ALBERTA_BOUNDS.lat.max || 
+        finalLng < ALBERTA_BOUNDS.lng.min || finalLng > ALBERTA_BOUNDS.lng.max) {
       console.error('Calculated coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
       return null;
     }
@@ -99,7 +104,6 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
 }
 
 export function formatLSDLocation(coords: LSDCoordinates): string {
-  console.log("Formatting LSD Coordinates:", coords);
   return `${coords.lsd}-${coords.section}-${coords.township}-${coords.range} ${coords.meridian}`;
 }
 
