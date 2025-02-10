@@ -49,7 +49,7 @@ export default function Home() {
     section: "",
     township: "",
     range: "",
-    meridian: "W5"
+    meridian: "W4" // Changed default meridian to W4
   });
 
   const handleAreaChange = (value: string) => {
