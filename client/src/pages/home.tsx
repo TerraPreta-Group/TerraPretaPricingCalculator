@@ -19,6 +19,9 @@ import {
   formatNumber,
   type UnitType,
 } from "@/lib/calculator";
+import { calculateDistance } from "@/lib/distance";
+import { Combobox } from "@/components/ui/combobox";
+
 
 const calculateToteBags = (requiredProduct: number): number => {
   return Math.ceil(requiredProduct / 1000);
@@ -27,6 +30,23 @@ const calculateToteBags = (requiredProduct: number): number => {
 const calculateDeliveryCost = (distance: number): number => {
   return distance * 1.5; // $1.50 per km
 };
+
+type Town = {
+  value: string;
+  label: string;
+};
+
+const ALBERTA_TOWNS: Town[] = [
+  { value: "calgary", label: "Calgary, AB" },
+  { value: "edmonton", label: "Edmonton, AB" },
+  { value: "red-deer", label: "Red Deer, AB" },
+  { value: "lethbridge", label: "Lethbridge, AB" },
+  { value: "medicine-hat", label: "Medicine Hat, AB" },
+  { value: "airdrie", label: "Airdrie, AB" },
+  { value: "grande-prairie", label: "Grande Prairie, AB" },
+  { value: "spruce-grove", label: "Spruce Grove, AB" },
+  // Add more Alberta towns as needed
+];
 
 export default function Home() {
   const [area, setArea] = useState<string>("");
@@ -37,6 +57,7 @@ export default function Home() {
   const [customUnit, setCustomUnit] = useState<UnitType>("acre");
   const [pickup, setPickup] = useState<string>("no");
   const [deliveryDistance, setDeliveryDistance] = useState<string>("");
+  const [selectedTown, setSelectedTown] = useState<string>("");
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -63,6 +84,20 @@ export default function Home() {
       setDeliveryDistance(value);
     }
   };
+
+  useEffect(() => {
+    async function updateDistance() {
+      if (selectedTown) {
+        const town = ALBERTA_TOWNS.find(t => t.value === selectedTown);
+        if (town) {
+          const distance = await calculateDistance(town.label);
+          setDeliveryDistance(distance.toString());
+        }
+      }
+    }
+    updateDistance();
+  }, [selectedTown]);
+
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
@@ -201,15 +236,17 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2 justify-end">
-                    <Input
-                      type="text"
-                      value={deliveryDistance}
-                      onChange={(e) => handleDeliveryDistanceChange(e.target.value)}
-                      placeholder="Distance"
-                      className="w-[80px]"
+                  <div className="space-y-2">
+                    <Combobox
+                      options={ALBERTA_TOWNS}
+                      value={selectedTown}
+                      onValueChange={setSelectedTown}
+                      placeholder="Select nearest town"
                     />
-                    <span>x $1.50 per km</span>
+                    <div className="flex items-center gap-2 justify-end text-sm">
+                      <span>{deliveryDistance ? `${formatNumber(parseFloat(deliveryDistance))} km` : "Select a town"}</span>
+                      <span>× $1.50 per km</span>
+                    </div>
                   </div>
                 </TableCell>
               </TableRow>
