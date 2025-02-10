@@ -37,15 +37,36 @@ type Town = {
 };
 
 const ALBERTA_TOWNS: Town[] = [
-  { value: "calgary", label: "Calgary, AB" },
-  { value: "edmonton", label: "Edmonton, AB" },
-  { value: "red-deer", label: "Red Deer, AB" },
-  { value: "lethbridge", label: "Lethbridge, AB" },
-  { value: "medicine-hat", label: "Medicine Hat, AB" },
   { value: "airdrie", label: "Airdrie, AB" },
+  { value: "banff", label: "Banff, AB" },
+  { value: "beaumont", label: "Beaumont, AB" },
+  { value: "brooks", label: "Brooks, AB" },
+  { value: "calgary", label: "Calgary, AB" },
+  { value: "camrose", label: "Camrose, AB" },
+  { value: "canmore", label: "Canmore, AB" },
+  { value: "chestermere", label: "Chestermere, AB" },
+  { value: "cold-lake", label: "Cold Lake, AB" },
+  { value: "edmonton", label: "Edmonton, AB" },
+  { value: "fort-mcmurray", label: "Fort McMurray, AB" },
+  { value: "fort-saskatchewan", label: "Fort Saskatchewan, AB" },
   { value: "grande-prairie", label: "Grande Prairie, AB" },
+  { value: "high-river", label: "High River, AB" },
+  { value: "hinton", label: "Hinton, AB" },
+  { value: "lacombe", label: "Lacombe, AB" },
+  { value: "leduc", label: "Leduc, AB" },
+  { value: "lethbridge", label: "Lethbridge, AB" },
+  { value: "lloydminster", label: "Lloydminster, AB" },
+  { value: "medicine-hat", label: "Medicine Hat, AB" },
+  { value: "morinville", label: "Morinville, AB" },
+  { value: "okotoks", label: "Okotoks, AB" },
+  { value: "olds", label: "Olds, AB" },
+  { value: "red-deer", label: "Red Deer, AB" },
   { value: "spruce-grove", label: "Spruce Grove, AB" },
-  // Add more Alberta towns as needed
+  { value: "st-albert", label: "St. Albert, AB" },
+  { value: "stony-plain", label: "Stony Plain, AB" },
+  { value: "strathmore", label: "Strathmore, AB" },
+  { value: "wetaskiwin", label: "Wetaskiwin, AB" },
+  { value: "whitecourt", label: "Whitecourt, AB" }
 ];
 
 export default function Home() {
