@@ -121,7 +121,7 @@ export function LSDSelector({ value, onChange }: LSDSelectorProps) {
             value={value.meridian}
             onValueChange={(v) => handleChange("meridian", v)}
           >
-            <SelectTrigger className="min-w-[120px]">
+            <SelectTrigger className="min-w-[80px]">
               <SelectValue placeholder="Meridian" />
             </SelectTrigger>
             <SelectContent>
