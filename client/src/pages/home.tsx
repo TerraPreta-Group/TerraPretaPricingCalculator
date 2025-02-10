@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <Card className="w-full max-w-xl">
+      <Card className="w-full max-w-xl border-2 border-black">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Pellet Pricing Calculator
@@ -165,11 +165,11 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
                 <TableCell className="text-base">$1.75</TableCell>
               </TableRow>
-              <TableRow className="bg-muted/50">
+              <TableRow>
                 <TableCell className="font-medium text-base text-center">Required Pellets</TableCell>
                 <TableCell className="text-base">{formatNumber(requiredProduct)} lbs</TableCell>
               </TableRow>
-              <TableRow className="bg-muted/50">
+              <TableRow>
                 <TableCell className="font-medium text-base text-center">Tote Bags Required</TableCell>
                 <TableCell className="text-base">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
@@ -217,7 +217,7 @@ export default function Home() {
                 <TableCell className="font-bold text-xl text-center">Cost of Delivery</TableCell>
                 <TableCell className="text-xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
-              <TableRow className="bg-slate-100">
+              <TableRow className="bg-green-100">
                 <TableCell className="font-bold text-2xl text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
