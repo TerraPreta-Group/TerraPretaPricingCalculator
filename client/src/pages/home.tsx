@@ -173,7 +173,7 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">Tote Bags Required</TableCell>
                 <TableCell className="text-base">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
-              <TableRow className="bg-gray-200">
+              <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center">Cost of Pellets</TableCell>
                 <TableCell className="text-xl font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
@@ -213,11 +213,11 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
-              <TableRow className="bg-gray-200">
+              <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center">Cost of Delivery</TableCell>
                 <TableCell className="text-xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
-              <TableRow className="bg-green-100">
+              <TableRow className="bg-green-100 border-2 border-black border-t-4">
                 <TableCell className="font-bold text-2xl text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
               </TableRow>
