@@ -246,7 +246,7 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Cost of Delivery</TableCell>
+                <TableCell className="font-bold text-xl text-center">Estimated Delivery Cost</TableCell>
                 <TableCell className="text-xl font-bold text-primary">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
