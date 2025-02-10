@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   convertToAcres,
   calculateRequiredProduct,
@@ -21,8 +21,11 @@ import {
 } from "@/lib/calculator";
 
 const calculateToteBags = (requiredProduct: number): number => {
-  // Round up to the nearest 1000 lb interval
   return Math.ceil(requiredProduct / 1000);
+};
+
+const calculateDeliveryCost = (distance: number): number => {
+  return distance * 1.5; // $1.50 per km
 };
 
 export default function Home() {
@@ -32,6 +35,8 @@ export default function Home() {
   const [width, setWidth] = useState<string>("");
   const [customArea, setCustomArea] = useState<string>("");
   const [customUnit, setCustomUnit] = useState<UnitType>("acre");
+  const [pickup, setPickup] = useState<string>("no");
+  const [deliveryDistance, setDeliveryDistance] = useState<string>("");
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -53,10 +58,18 @@ export default function Home() {
     }
   };
 
+  const handleDeliveryDistanceChange = (value: string) => {
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setDeliveryDistance(value);
+    }
+  };
+
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
-  const totalCost = calculateCost(requiredProduct);
+  const pelletsCost = calculateCost(requiredProduct);
   const toteBags = calculateToteBags(requiredProduct);
+  const deliveryCost = deliveryDistance ? calculateDeliveryCost(parseFloat(deliveryDistance)) : 0;
+  const totalCost = pelletsCost + deliveryCost;
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
@@ -160,6 +173,47 @@ export default function Home() {
                 <TableCell className="font-medium text-center">Tote Bags Required</TableCell>
                 <TableCell className="text-lg">{toteBags} bags (1,000 lbs each)</TableCell>
               </TableRow>
+              <TableRow className="bg-primary/10">
+                <TableCell className="font-medium text-center">Cost of Pellets</TableCell>
+                <TableCell className="text-lg font-bold text-primary">${formatNumber(pelletsCost)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-center">Pickup</TableCell>
+                <TableCell>
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      variant={pickup === "yes" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPickup("yes")}
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      variant={pickup === "no" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPickup("no")}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-center">Delivery from Sundre</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2 justify-end">
+                    <Input
+                      type="text"
+                      value={deliveryDistance}
+                      onChange={(e) => handleDeliveryDistanceChange(e.target.value)}
+                      placeholder="Distance"
+                      className="w-[80px]"
+                    />
+                    <span>x $1.50 per km =</span>
+                    <span className="font-bold">${formatNumber(deliveryCost)}</span>
+                  </div>
+                </TableCell>
+              </TableRow>
               <TableRow className="bg-primary/10 py-2">
                 <TableCell className="font-bold text-lg text-center">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary">${formatNumber(totalCost)}</TableCell>
@@ -175,8 +229,8 @@ export default function Home() {
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                Schedule a Call
+              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                Questions?
               </Button>
             </Link>
           </div>
