@@ -36,6 +36,8 @@ const callSchema = baseContactFormSchema.extend({
 // Combined schema using discriminated union
 const contactFormSchema = z.discriminatedUnion("type", [orderSchema, callSchema]);
 
+const SUNDRE_LOCATION = "Sundre, AB, Canada";
+
 export function registerRoutes(app: Express): Server {
   app.post("/api/contact", async (req: Request, res: Response) => {
     try {
@@ -64,6 +66,47 @@ export function registerRoutes(app: Express): Server {
       console.error("Form submission error:", error);
       res.status(400).json({
         message: "Invalid form data",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  app.get("/api/distance/:destination", async (req: Request, res: Response) => {
+    try {
+      const destination = decodeURIComponent(req.params.destination);
+      const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+      if (!apiKey) {
+        throw new Error("Google Maps API key is not configured");
+      }
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
+          SUNDRE_LOCATION
+        )}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Distance API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Distance API response:", data);
+
+      if (
+        data.status === "OK" &&
+        data.rows[0]?.elements[0]?.status === "OK"
+      ) {
+        const distanceInMeters = data.rows[0].elements[0].distance.value;
+        const kilometers = distanceInMeters / 1000;
+        res.json({ distance: kilometers });
+      } else {
+        throw new Error("Could not calculate distance");
+      }
+    } catch (error) {
+      console.error("Distance calculation error:", error);
+      res.status(500).json({
+        message: "Failed to calculate distance",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }

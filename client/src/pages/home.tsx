@@ -244,8 +244,18 @@ export default function Home() {
                       placeholder="Select nearest town"
                     />
                     <div className="flex items-center gap-2 justify-end text-sm">
-                      <span>{deliveryDistance ? `${formatNumber(parseFloat(deliveryDistance))} km` : "Select a town"}</span>
-                      <span>× $1.50 per km</span>
+                      {selectedTown ? (
+                        deliveryDistance ? (
+                          <>
+                            <span>{formatNumber(parseFloat(deliveryDistance))} km</span>
+                            <span>× $1.50 per km</span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground">Calculating distance...</span>
+                        )
+                      ) : (
+                        <span className="text-muted-foreground">Select a town to calculate distance</span>
+                      )}
                     </div>
                   </div>
                 </TableCell>
