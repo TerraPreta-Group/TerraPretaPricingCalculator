@@ -145,15 +145,15 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Application Rate</TableCell>
-                <TableCell>1,500 lbs/acre</TableCell>
+                <TableCell className="font-medium">Recommended Application Rate</TableCell>
+                <TableCell>1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Product Cost</TableCell>
-                <TableCell>$1.75/lb</TableCell>
+                <TableCell className="font-medium">Cost per lb</TableCell>
+                <TableCell>$1.75</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
-                <TableCell className="font-medium">Required Product</TableCell>
+                <TableCell className="font-medium">Required Pellets</TableCell>
                 <TableCell>{formatNumber(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow className="bg-muted/50">
