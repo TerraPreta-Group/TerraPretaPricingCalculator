@@ -133,9 +133,22 @@ export function registerRoutes(app: Express): Server {
       const { lat, lng } = req.params;
       const SUNDRE_COORDS = { lat: 51.7979, lng: -114.6402 }; // Updated Sundre, AB coordinates
 
+      // Parse and validate coordinates
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+
+      if (isNaN(latitude) || isNaN(longitude)) {
+        throw new Error('Invalid coordinates provided');
+      }
+
+      // Validate coordinates are within Alberta bounds
+      if (latitude < 49 || latitude > 60 || longitude < -120 || longitude > -110) {
+        throw new Error('Coordinates outside Alberta bounds');
+      }
+
       console.log('Distance calculation request:', {
         from: SUNDRE_COORDS,
-        to: { lat, lng }
+        to: { lat: latitude, lng: longitude }
       });
 
       const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -144,7 +157,7 @@ export function registerRoutes(app: Express): Server {
       }
 
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${lat},${lng}&key=${apiKey}`
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${SUNDRE_COORDS.lat},${SUNDRE_COORDS.lng}&destinations=${latitude},${longitude}&key=${apiKey}`
       );
 
       if (!response.ok) {
@@ -163,9 +176,9 @@ export function registerRoutes(app: Express): Server {
         console.error("Distance calculation failed:", {
           status: data.status,
           elementStatus: data.rows[0]?.elements[0]?.status,
-          coordinates: `${lat},${lng}`
+          coordinates: `${latitude},${longitude}`
         });
-        throw new Error(`Could not calculate distance to coordinates ${lat},${lng}`);
+        throw new Error(`Could not calculate distance to coordinates ${latitude},${longitude}`);
       }
     } catch (error) {
       console.error("Distance calculation error:", error);

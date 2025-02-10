@@ -15,12 +15,21 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
     } else {
       // LSD coordinates
       const coords = lsdToLatLong(destination);
+      console.log('LSD input:', destination);
       console.log('Converted LSD coordinates:', coords);
 
       if (!coords) {
         throw new Error('Invalid LSD coordinates');
       }
-      apiEndpoint = `/api/distance/coordinates/${coords.lat}/${coords.lng}`;
+
+      // Validate coordinates are within Alberta bounds
+      if (coords.lat < 49 || coords.lat > 60 || 
+          coords.lng < -120 || coords.lng > -110) {
+        console.error('Coordinates outside Alberta bounds:', coords);
+        throw new Error('Calculated coordinates outside Alberta bounds');
+      }
+
+      apiEndpoint = `/api/distance/coordinates/${coords.lat.toFixed(6)}/${coords.lng.toFixed(6)}`;
     }
 
     console.log('Calling distance API endpoint:', apiEndpoint);
