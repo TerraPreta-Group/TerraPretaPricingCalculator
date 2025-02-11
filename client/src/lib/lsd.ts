@@ -4,10 +4,17 @@ import { z } from "zod";
 const TOWNSHIP_HEIGHT = 0.0972; // Degrees latitude per township (approximately 6 miles)
 const RANGE_WIDTH = 0.1428571; // Degrees longitude per range (approximately 6 miles at 49°N)
 
-// Alberta bounds (adjusted for complete coverage)
+// Alberta bounds (expanded to include all meridian territories)
 const ALBERTA_BOUNDS = {
   lat: { min: 49.0, max: 60.0 },
-  lng: { min: -120.0, max: -109.0 }  // Expanded to include all W4 territory
+  lng: { min: -120.0, max: -109.0 }  // Expanded to include all territories
+};
+
+// Base meridian coordinates
+const MERIDIAN_BASE = {
+  'W4': -110.0, // AB/SK border
+  'W5': -114.0, // Fifth Meridian
+  'W6': -118.0  // Sixth Meridian
 };
 
 export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number } | null {
@@ -23,12 +30,13 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     if (isNaN(township) || township < 1 || township > 126 ||
         isNaN(range) || range < 1 || range > 34 ||
         isNaN(section) || section < 1 || section > 36 ||
-        isNaN(lsd) || lsd < 1 || lsd > 16) {
+        isNaN(lsd) || lsd < 1 || lsd > 16 ||
+        !MERIDIAN_BASE[meridian as keyof typeof MERIDIAN_BASE]) {
       console.error('Invalid LSD values:', coords);
       return null;
     }
 
-    // Calculate latitude based on township (same calculation for all meridians)
+    // Calculate latitude (same for all meridians)
     const baseLat = 49.0;
     const latFromTownship = baseLat + ((township - 1) * TOWNSHIP_HEIGHT);
     const sectionRow = Math.floor((section - 1) / 6);
@@ -37,36 +45,40 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
                      (sectionRow * (TOWNSHIP_HEIGHT / 6)) - 
                      (lsdRow * (TOWNSHIP_HEIGHT / 24));
 
-    // Apply latitude correction to range width (ranges get narrower as you go north)
+    // Apply latitude correction for range width
     const latCorrection = Math.cos(finalLat * Math.PI / 180);
     const adjustedRangeWidth = RANGE_WIDTH * latCorrection;
 
-    // Set up meridian-specific calculations
-    let baseLng;
+    // Get base longitude for meridian
+    const baseLng = MERIDIAN_BASE[meridian as keyof typeof MERIDIAN_BASE];
+
+    // Calculate range offset based on meridian
     let rangeOffset;
+    let rangeDirection;
 
     switch (meridian) {
       case 'W4':
-        baseLng = -110.0;
-        // Always west from W4
+        // Ranges increase westward from W4
         rangeOffset = (range - 1) * adjustedRangeWidth;
+        rangeDirection = 1;
         break;
       case 'W5':
-        baseLng = -114.0;
-        // East for ranges 1-17, West for 18+
         if (range <= 17) {
-          rangeOffset = -(range - 1) * adjustedRangeWidth;  // East
+          // Ranges 1-17 increase eastward from W5
+          rangeOffset = -(range - 1) * adjustedRangeWidth;
+          rangeDirection = -1;
         } else {
-          rangeOffset = (range - 17) * adjustedRangeWidth;  // West
+          // Ranges 18+ increase westward from W5
+          rangeOffset = (range - 17) * adjustedRangeWidth;
+          rangeDirection = 1;
         }
         break;
       case 'W6':
-        baseLng = -118.0;
-        // Always east from W6
+        // Ranges increase eastward from W6
         rangeOffset = -(range - 1) * adjustedRangeWidth;
+        rangeDirection = -1;
         break;
       default:
-        console.error('Invalid meridian:', meridian);
         return null;
     }
 
@@ -74,10 +86,9 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const sectionCol = ((section - 1) % 6);
     const lsdCol = ((lsd - 1) % 4);
 
-    // Direction of the offset should match the range direction
-    const rangeDirection = meridian === 'W4' || (meridian === 'W5' && range > 17) ? 1 : -1;
-    const sectionLngOffset = (sectionCol * adjustedRangeWidth / 6);
-    const lsdLngOffset = (lsdCol * adjustedRangeWidth / 24);
+    // Apply section and LSD offsets in the same direction as the range
+    const sectionLngOffset = sectionCol * (adjustedRangeWidth / 6);
+    const lsdLngOffset = lsdCol * (adjustedRangeWidth / 24);
 
     // Calculate final longitude
     const finalLng = baseLng + rangeOffset + 
