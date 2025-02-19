@@ -153,8 +153,8 @@ export function registerRoutes(app: Express): Server {
         throw new Error('Invalid coordinates provided');
       }
 
-      // Validate coordinates are within Alberta bounds
-      if (latitude < 49 || latitude > 60 || longitude < -120 || longitude > -110) {
+      // Validate coordinates are within Alberta bounds (including all meridian territories)
+      if (latitude < 49.0 || latitude > 60.0 || longitude < -120.0 || longitude > -109.0) {
         throw new Error('Coordinates outside Alberta bounds');
       }
 

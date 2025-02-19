@@ -24,9 +24,9 @@ export async function calculateDistance(destination: string | LSDCoordinates): P
         throw new Error('Invalid LSD coordinates');
       }
 
-      // Validate coordinates are within Alberta bounds
-      if (coords.lat < 49 || coords.lat > 60 || 
-          coords.lng < -120 || coords.lng > -110) {
+      // Adjusted bounds to match actual Alberta territory including all meridians
+      if (coords.lat < 49.0 || coords.lat > 60.0 || 
+          coords.lng < -120.0 || coords.lng > -109.0) {
         console.error('Coordinates outside Alberta bounds:', coords);
         throw new Error('Calculated coordinates outside Alberta bounds');
       }
