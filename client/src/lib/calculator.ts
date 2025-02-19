@@ -33,13 +33,14 @@ export function calculateToteBags(lbs: number): number {
 }
 
 export function calculateDeliveryHours(distance: number): number {
-  return distance / AVERAGE_SPEED;
+  const oneWayHours = distance / AVERAGE_SPEED;
+  // Return total round trip hours rounded to nearest whole number
+  return Math.round(oneWayHours * 2);
 }
 
 export function calculateDeliveryCost(distance: number): number {
-  const oneWayHours = calculateDeliveryHours(distance);
-  const roundTripHours = oneWayHours * 2; // Double for return trip
-  return roundTripHours * HOURLY_RATE;
+  const totalHours = calculateDeliveryHours(distance);
+  return totalHours * HOURLY_RATE;
 }
 
 export function formatNumber(num: number): string {

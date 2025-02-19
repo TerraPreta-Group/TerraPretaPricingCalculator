@@ -268,11 +268,7 @@ export default function Home() {
                             isCalculatingDistance ? (
                               <span className="text-muted-foreground">Calculating distance...</span>
                             ) : deliveryDistance ? (
-                              <>
-                                <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                                <span>≈ {formatNumber(calculateDeliveryHours(parseFloat(deliveryDistance)))} hrs each way</span>
-                                <span>@ $150/hr</span>
-                              </>
+                              <span>{Math.round(parseFloat(deliveryDistance))} km • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr</span>
                             ) : (
                               <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
                             )
@@ -309,13 +305,7 @@ export default function Home() {
                                 </div>
                               )}
                               {deliveryDistance ? (
-                                <div className="flex flex-col items-center gap-1">
-                                  <div className="flex gap-2 items-center">
-                                    <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                                    <span>≈ {formatNumber(calculateDeliveryHours(parseFloat(deliveryDistance)))} hrs each way</span>
-                                  </div>
-                                  <span>@ $150/hr (round trip)</span>
-                                </div>
+                                <span>{Math.round(parseFloat(deliveryDistance))} km • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr</span>
                               ) : (
                                 <span className="text-muted-foreground">
                                   Select all LSD values to calculate distance
