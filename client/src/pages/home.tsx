@@ -32,6 +32,11 @@ const calculateDeliveryCost = (distance: number): number => {
   return distance * 1.5; // $1.50 per km
 };
 
+const calculateDeliveryHours = (distance: number): number => {
+  // Assuming an average speed and adding buffer time
+  return Math.ceil(distance / 50) * 2; // 50km/hr average speed, *2 for round trip
+};
+
 export default function Home() {
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
@@ -276,7 +281,8 @@ export default function Home() {
                             ) : deliveryDistance ? (
                               <>
                                 <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                                <span>× $1.50 per km</span>
+                                <span>≈ {formatNumber(calculateDeliveryHours(parseFloat(deliveryDistance)))} hrs each way</span>
+                                <span>@ $150/hr</span>
                               </>
                             ) : (
                               <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
@@ -292,7 +298,7 @@ export default function Home() {
                           value={lsdCoords}
                           onChange={setLsdCoords}
                         />
-                        <div className="flex flex-col items-center gap-2 justify-center text-sm"> {/* Modified div */}
+                        <div className="flex flex-col items-center gap-2 justify-center text-sm">
                           {isCalculatingDistance ? (
                             <span className="text-muted-foreground">Calculating distance...</span>
                           ) : (
@@ -314,9 +320,12 @@ export default function Home() {
                                 </div>
                               )}
                               {deliveryDistance ? (
-                                <div className="flex gap-2 items-center">
-                                  <span>{Math.round(parseFloat(deliveryDistance))} km</span>
-                                  <span>× $1.50 per km</span>
+                                <div className="flex flex-col items-center gap-1">
+                                  <div className="flex gap-2 items-center">
+                                    <span>{Math.round(parseFloat(deliveryDistance))} km</span>
+                                    <span>≈ {formatNumber(calculateDeliveryHours(parseFloat(deliveryDistance)))} hrs each way</span>
+                                  </div>
+                                  <span>@ $150/hr (round trip)</span>
                                 </div>
                               ) : (
                                 <span className="text-muted-foreground">
@@ -333,7 +342,7 @@ export default function Home() {
               </TableRow>
               {/* Changed "Estimated Delivery Cost" to "Delivery" */}
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Delivery</TableCell>
+                <TableCell className="font-bold text-xl text-center">Delivery<br/><span className="text-sm font-normal">(round trip)</span></TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">

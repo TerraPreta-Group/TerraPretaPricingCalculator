@@ -7,6 +7,8 @@ const CONVERSION_RATES = {
 const APPLICATION_RATE = 1500; // lb/ac
 const PRICE_PER_LB = 1.75; // $/lb
 const TOTE_BAG_CAPACITY = 1000; // lbs per tote bag
+const AVERAGE_SPEED = 80; // km/h
+const HOURLY_RATE = 150; // $/hour
 
 export type UnitType = "sqft" | "sqm" | "acre" | "ha";
 
@@ -28,6 +30,16 @@ export function calculateCost(lbs: number): number {
 
 export function calculateToteBags(lbs: number): number {
   return Math.ceil(lbs / TOTE_BAG_CAPACITY);
+}
+
+export function calculateDeliveryHours(distance: number): number {
+  return distance / AVERAGE_SPEED;
+}
+
+export function calculateDeliveryCost(distance: number): number {
+  const oneWayHours = calculateDeliveryHours(distance);
+  const roundTripHours = oneWayHours * 2; // Double for return trip
+  return roundTripHours * HOURLY_RATE;
 }
 
 export function formatNumber(num: number): string {
