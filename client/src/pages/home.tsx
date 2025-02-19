@@ -16,26 +16,16 @@ import {
   convertToAcres,
   calculateRequiredProduct,
   calculateCost,
+  calculateToteBags,
+  calculateDeliveryHours,
+  calculateDeliveryCost,
   formatNumber,
   type UnitType,
 } from "@/lib/calculator";
 import { calculateDistance } from "@/lib/distance";
 import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
-import { lsdToLatLong } from "@/lib/lsd"; // Added import
-
-const calculateToteBags = (requiredProduct: number): number => {
-  return Math.ceil(requiredProduct / 1000);
-};
-
-const calculateDeliveryCost = (distance: number): number => {
-  return distance * 1.5; // $1.50 per km
-};
-
-const calculateDeliveryHours = (distance: number): number => {
-  // Assuming an average speed and adding buffer time
-  return Math.ceil(distance / 50) * 2; // 50km/hr average speed, *2 for round trip
-};
+import { lsdToLatLong } from "@/lib/lsd";
 
 export default function Home() {
   const [area, setArea] = useState<string>("");
@@ -54,7 +44,7 @@ export default function Home() {
     section: "",
     township: "",
     range: "",
-    meridian: "W4" // Changed default meridian to W4
+    meridian: "W4"
   });
 
   const handleAreaChange = (value: string) => {
@@ -111,7 +101,7 @@ export default function Home() {
   const pelletsCost = calculateCost(requiredProduct);
   const toteBags = calculateToteBags(requiredProduct);
   const deliveryCost = deliveryDistance ? calculateDeliveryCost(parseFloat(deliveryDistance)) : 0;
-  const totalCost = pelletsCost + deliveryCost;
+  const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
@@ -150,7 +140,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Custom Area Section - Removed "Calculator" */}
+          {/* Custom Area Section */}
           <div className="space-y-4">
             <div className="text-center">
               <Label className="block mb-2 text-xl font-medium">Custom Area</Label>
@@ -207,7 +197,6 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
                 <TableCell className="text-base text-center pr-8">$1.75</TableCell>
               </TableRow>
-              {/* Modified Table Rows */}
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Pellets</TableCell>
                 <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
@@ -340,7 +329,6 @@ export default function Home() {
                   </div>
                 </TableCell>
               </TableRow>
-              {/* Changed "Estimated Delivery Cost" to "Delivery" */}
               <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center">Delivery<br/><span className="text-sm font-normal">(round trip)</span></TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
