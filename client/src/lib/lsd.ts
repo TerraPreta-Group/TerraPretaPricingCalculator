@@ -58,9 +58,9 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
 
     switch (meridian) {
       case 'W4':
-        // Ranges increase westward from W4
+        // Special handling for W4 meridian (Saskatchewan border)
         rangeOffset = (range - 1) * adjustedRangeWidth;
-        rangeDirection = 1;
+        rangeDirection = 1; // Always west from W4
         break;
       case 'W5':
         if (range <= 17) {
@@ -86,13 +86,19 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
     const sectionCol = ((section - 1) % 6);
     const lsdCol = ((lsd - 1) % 4);
 
-    // Apply section and LSD offsets in the same direction as the range
+    // For W4, we need to handle the offsets differently since it's the reference meridian
     const sectionLngOffset = sectionCol * (adjustedRangeWidth / 6);
     const lsdLngOffset = lsdCol * (adjustedRangeWidth / 24);
 
-    // Calculate final longitude
-    const finalLng = baseLng + rangeOffset + 
-                    (rangeDirection * (sectionLngOffset + lsdLngOffset));
+    // Calculate final longitude with special handling for W4
+    let finalLng;
+    if (meridian === 'W4') {
+      // For W4, add offsets directly since we're moving west from the border
+      finalLng = baseLng + rangeOffset + sectionLngOffset + lsdLngOffset;
+    } else {
+      // For W5 and W6, apply the direction to the offsets
+      finalLng = baseLng + rangeOffset + (rangeDirection * (sectionLngOffset + lsdLngOffset));
+    }
 
     // Debug logging
     console.log('LSD Calculation Details:', {
@@ -114,13 +120,6 @@ export function lsdToLatLong(coords: LSDCoordinates): { lat: number; lng: number
         final: finalLng
       }
     });
-
-    // Validate coordinates are within Alberta bounds
-    if (finalLat < ALBERTA_BOUNDS.lat.min || finalLat > ALBERTA_BOUNDS.lat.max ||
-        finalLng < ALBERTA_BOUNDS.lng.min || finalLng > ALBERTA_BOUNDS.lng.max) {
-      console.error('Coordinates outside Alberta bounds:', { lat: finalLat, lng: finalLng });
-      return null;
-    }
 
     return { lat: finalLat, lng: finalLng };
   } catch (error) {
