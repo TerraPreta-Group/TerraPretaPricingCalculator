@@ -29,7 +29,7 @@ import { lsdToLatLong } from "@/lib/lsd";
 
 const CONVERSION_RATES = {
   sqm_to_acre: 0.000247105
-}
+};
 
 export default function Home() {
   const [area, setArea] = useState<string>("");
@@ -155,18 +155,16 @@ export default function Home() {
                       if (value) {
                         // Each wellsite is 100m x 100m = 10000 sqm
                         const totalSqMeters = parseInt(value) * 10000;
-                        const acres = convertToAcres(totalSqMeters, "sqm");
-                        setArea(acres.toString());
+                        const acres = (totalSqMeters * CONVERSION_RATES.sqm_to_acre).toFixed(2);
+                        setArea(acres);
                         setUnit("acre");
                       }
                     }
                   }}
-                  placeholder="Enter number of sites..."
+                  placeholder="Enter number"
                   className="w-[120px]"
                 />
-                <span className="text-sm text-muted-foreground">
-                  (Each site is 100m × 100m = 1 hectare, approximately 2.47 acres)
-                </span>
+                <span className="text-sm">100m × 100m</span>
               </div>
             </div>
           </div>
