@@ -27,6 +27,10 @@ import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
 import { lsdToLatLong } from "@/lib/lsd";
 
+const CONVERSION_RATES = {
+  sqm_to_acre: 0.000247105
+}
+
 export default function Home() {
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
@@ -47,6 +51,7 @@ export default function Home() {
     meridian: "W4"
   });
   const [pricePerLb, setPricePerLb] = useState<number>(1.75);
+  const [wellsites, setWellsites] = useState<string>(""); // Added state for wellsites
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -97,6 +102,17 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [deliveryLocation, locationType, lsdCoords]);
 
+  useEffect(() => {
+    if (area && wellsites) {
+      // Clear wellsites if area is manually changed
+      const wellsiteArea = (parseInt(wellsites) * 10000 * CONVERSION_RATES.sqm_to_acre).toFixed(2);
+      if (area !== wellsiteArea) {
+        setWellsites("");
+      }
+    }
+  }, [area]);
+
+
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
   const pelletsCost = calculateCost(requiredProduct, pricePerLb);
@@ -113,10 +129,42 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Area Input Section */}
+          {/* New Wellsites Section */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="area" className="block mb-2 text-xl font-medium">Area</Label>
+              <Label htmlFor="wellsites" className="block mb-2 text-xl font-medium">Number of Wellsites</Label>
+              <div className="flex gap-4 justify-center items-center">
+                <Input
+                  id="wellsites"
+                  type="text"
+                  value={wellsites}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "" || /^\d*$/.test(value)) {
+                      setWellsites(value);
+                      if (value) {
+                        // Each wellsite is 100m x 100m = 10000 sqm
+                        const totalSqMeters = parseInt(value) * 10000;
+                        const acres = convertToAcres(totalSqMeters, "sqm");
+                        setArea(acres.toString());
+                        setUnit("acre");
+                      }
+                    }
+                  }}
+                  placeholder="Enter number of sites..."
+                  className="w-[120px]"
+                />
+                <span className="text-sm text-muted-foreground">
+                  (Each site is 100m × 100m = 1 hectare)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Existing Area Input Section */}
+          <div className="space-y-4">
+            <div className="text-center">
+              <Label htmlFor="area" className="block mb-2 text-xl font-medium">Custom Area</Label>
               <div className="flex gap-4 justify-center">
                 <Input
                   id="area"
