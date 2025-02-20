@@ -51,7 +51,7 @@ export default function Home() {
     meridian: "W4"
   });
   const [pricePerLb, setPricePerLb] = useState<number>(1.75);
-  const [wellsites, setWellsites] = useState<string>(""); // Added state for wellsites
+  const [wellsites, setWellsites] = useState<string>("");
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -112,6 +112,16 @@ export default function Home() {
     }
   }, [area]);
 
+  useEffect(() => {
+    if (area && unit === "acre" && !wellsites) {
+      // Calculate number of wellsites from acres
+      const sqMeters = parseFloat(area) / CONVERSION_RATES.sqm_to_acre;
+      const sites = Math.round(sqMeters / 10000); // 10000 sq meters per site
+      if (sites > 0) {
+        setWellsites(sites.toString());
+      }
+    }
+  }, [area, unit]);
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
@@ -155,7 +165,7 @@ export default function Home() {
                   className="w-[120px]"
                 />
                 <span className="text-sm text-muted-foreground">
-                  (Each site is 100m × 100m = 1 hectare)
+                  (Each site is 100m × 100m = 1 hectare, approximately 2.47 acres)
                 </span>
               </div>
             </div>
