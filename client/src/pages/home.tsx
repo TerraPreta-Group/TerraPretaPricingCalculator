@@ -199,7 +199,9 @@ export default function Home() {
                 <TableCell className="text-base text-center pr-8">
                   <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
                     <SelectTrigger className="w-[100px] mx-auto">
-                      <SelectValue placeholder="Select price" />
+                      <SelectValue>
+                        ${pricePerLb.toFixed(2)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1.25">$1.25</SelectItem>
