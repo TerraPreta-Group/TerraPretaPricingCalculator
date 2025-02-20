@@ -5,7 +5,6 @@ const CONVERSION_RATES = {
 };
 
 const APPLICATION_RATE = 1500; // lb/ac
-const PRICE_PER_LB = 1.75; // $/lb
 const TOTE_BAG_CAPACITY = 1000; // lbs per tote bag
 const AVERAGE_SPEED = 80; // km/h
 const HOURLY_RATE = 150; // $/hour
@@ -24,8 +23,8 @@ export function calculateRequiredProduct(acres: number): number {
   return acres * APPLICATION_RATE;
 }
 
-export function calculateCost(lbs: number): number {
-  return lbs * PRICE_PER_LB;
+export function calculateCost(lbs: number, pricePerLb: number): number {
+  return lbs * pricePerLb;
 }
 
 export function calculateToteBags(lbs: number): number {

@@ -46,6 +46,7 @@ export default function Home() {
     range: "",
     meridian: "W4"
   });
+  const [pricePerLb, setPricePerLb] = useState<number>(1.75);
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -98,7 +99,7 @@ export default function Home() {
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
-  const pelletsCost = calculateCost(requiredProduct);
+  const pelletsCost = calculateCost(requiredProduct, pricePerLb);
   const toteBags = calculateToteBags(requiredProduct);
   const deliveryCost = deliveryDistance ? calculateDeliveryCost(parseFloat(deliveryDistance)) : 0;
   const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
@@ -195,7 +196,18 @@ export default function Home() {
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
-                <TableCell className="text-base text-center pr-8">$1.75</TableCell>
+                <TableCell className="text-base text-center pr-8">
+                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
+                    <SelectTrigger className="w-[100px] mx-auto">
+                      <SelectValue placeholder="Select price" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1.25">$1.25</SelectItem>
+                      <SelectItem value="1.50">$1.50</SelectItem>
+                      <SelectItem value="1.75">$1.75</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Pellets</TableCell>
