@@ -268,7 +268,7 @@ export default function Home() {
                             isCalculatingDistance ? (
                               <span className="text-muted-foreground">Calculating distance...</span>
                             ) : deliveryDistance ? (
-                              <span>{Math.round(parseFloat(deliveryDistance) * 2)} km round trip • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr</span>
+                              <span>{Math.round(parseFloat(deliveryDistance) * 2)} km • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs • $150/hr</span>
                             ) : (
                               <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
                             )
