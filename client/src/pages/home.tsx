@@ -341,9 +341,7 @@ export default function Home() {
                             ) : (
                               <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
                             )
-                          ) : (
-                            <span className="text-muted-foreground">Enter a location to calculate distance</span>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     ) : (
