@@ -324,15 +324,15 @@ export default function Home() {
                     </div>
 
                     {locationType === "town" ? (
-                      <div className="space-y-2">
+                      <div className="flex items-center justify-center gap-4">
                         <Input
                           type="text"
                           value={deliveryLocation}
                           onChange={(e) => setDeliveryLocation(e.target.value)}
                           placeholder="Enter town name"
-                          className="w-full"
+                          className="w-[300px]"
                         />
-                        <div className="flex items-center gap-2 justify-center text-sm">
+                        <div className="flex items-center gap-2 text-sm">
                           {deliveryLocation ? (
                             isCalculatingDistance ? (
                               <span className="text-muted-foreground">Calculating distance...</span>
@@ -389,7 +389,7 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Delivery<br/><span className="text-sm font-normal">(round trip)</span></TableCell>
+                <TableCell className="font-bold text-xl text-center">Delivery<br/><span className="text-sm font-normal">(Round Trip)</span></TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
