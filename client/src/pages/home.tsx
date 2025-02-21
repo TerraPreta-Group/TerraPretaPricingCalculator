@@ -260,7 +260,6 @@ export default function Home() {
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1.25">$1.25</SelectItem>
                       <SelectItem value="1.50">$1.50</SelectItem>
                       <SelectItem value="1.75">$1.75</SelectItem>
                     </SelectContent>
