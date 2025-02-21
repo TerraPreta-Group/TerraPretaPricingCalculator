@@ -274,7 +274,7 @@ export default function Home() {
                 <TableCell className="font-medium text-base text-center">
                   <div className="space-y-1">
                     <div>Tote Bags</div>
-                    <div className="text-sm text-muted-foreground">(1000 lbs per bag)</div>
+                    <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
                   </div>
                 </TableCell>
                 <TableCell className="text-base text-center pr-8">{toteBags} bags</TableCell>
@@ -286,17 +286,17 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Pickup from Sundre</TableCell>
                 <TableCell>
-                  <div className="flex gap-2 justify-center pr-8">
+                  <div className="flex justify-center gap-4">
                     <Button
                       variant={pickup === "yes" ? "default" : "outline"}
-                      size="lg"
+                      className="flex-1 max-w-[120px]"
                       onClick={() => setPickup("yes")}
                     >
                       Yes
                     </Button>
                     <Button
                       variant={pickup === "no" ? "default" : "outline"}
-                      size="lg"
+                      className="flex-1 max-w-[120px]"
                       onClick={() => setPickup("no")}
                     >
                       No
