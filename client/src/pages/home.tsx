@@ -289,14 +289,14 @@ export default function Home() {
                   <div className="flex justify-center gap-4">
                     <Button
                       variant={pickup === "yes" ? "default" : "outline"}
-                      className="flex-1 max-w-[120px]"
+                      className="w-[100px]"
                       onClick={() => setPickup("yes")}
                     >
                       Yes
                     </Button>
                     <Button
                       variant={pickup === "no" ? "default" : "outline"}
-                      className="flex-1 max-w-[120px]"
+                      className="w-[100px]"
                       onClick={() => setPickup("no")}
                     >
                       No
@@ -312,14 +312,16 @@ export default function Home() {
                       <Button
                         variant={locationType === "town" ? "default" : "outline"}
                         onClick={() => setLocationType("town")}
+                        className="w-[100px]"
                       >
-                        Town Name
+                        Town
                       </Button>
                       <Button
                         variant={locationType === "lsd" ? "default" : "outline"}
                         onClick={() => setLocationType("lsd")}
+                        className="w-[100px]"
                       >
-                        LSD Location
+                        LSD
                       </Button>
                     </div>
 
