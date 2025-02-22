@@ -286,28 +286,30 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Pickup from Sundre</TableCell>
                 <TableCell>
-                  <div className="flex justify-center gap-4">
-                    <Button
-                      variant={pickup === "yes" ? "default" : "outline"}
-                      className="w-[100px]"
-                      onClick={() => setPickup("yes")}
-                    >
-                      Yes
-                    </Button>
-                    <Button
-                      variant={pickup === "no" ? "default" : "outline"}
-                      className="w-[100px]"
-                      onClick={() => setPickup("no")}
-                    >
-                      No
-                    </Button>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="flex justify-center gap-4">
+                      <Button
+                        variant={pickup === "yes" ? "default" : "outline"}
+                        className="w-[100px]"
+                        onClick={() => setPickup("yes")}
+                      >
+                        Yes
+                      </Button>
+                      <Button
+                        variant={pickup === "no" ? "default" : "outline"}
+                        className="w-[100px]"
+                        onClick={() => setPickup("no")}
+                      >
+                        No
+                      </Button>
+                    </div>
                   </div>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
-                  <div className="flex flex-col items-center gap-4 pr-8">
+                  <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
                       <Button
                         variant={locationType === "town" ? "default" : "outline"}
