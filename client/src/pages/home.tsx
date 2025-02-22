@@ -307,7 +307,7 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
                 <TableCell>
-                  <div className="space-y-4 pr-8">
+                  <div className="flex flex-col items-center gap-4 pr-8">
                     <div className="flex justify-center gap-4">
                       <Button
                         variant={locationType === "town" ? "default" : "outline"}
@@ -332,7 +332,7 @@ export default function Home() {
                           value={deliveryLocation}
                           onChange={(e) => setDeliveryLocation(e.target.value)}
                           placeholder="Enter town name"
-                          className="w-[300px]"
+                          className="w-[200px]"
                         />
                         <div className="flex items-center gap-2 text-sm">
                           {deliveryLocation ? (
