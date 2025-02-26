@@ -461,8 +461,7 @@ export default function Home() {
               <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center text-[#011028]">
                   Delivery<br/>
-                  <span className="text-sm font-normal text-[#011028]">(Round Trip)</span>
-                  <div className="text-xs font-normal text-[#011028]/70 mt-1">$150/hour including travel time</div>
+                  <div className="text-sm font-normal text-[#011028]/70 mt-1">Round trip · $150/hour including travel time</div>
                 </TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
