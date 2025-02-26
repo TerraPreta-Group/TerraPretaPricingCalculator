@@ -404,12 +404,12 @@ export default function Home() {
           {/* Action Buttons */}
           <div className="flex gap-4 justify-center pt-4">
             <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
-              <Button className="border-2 border-[#003703] hover:bg-[#003703]/10 text-[#003703] text-lg py-6 px-8 shadow-lg">
+              <Button variant="outline" className="border-2 border-[#003703] hover:bg-[#003703]/10 text-[#003703] text-lg py-6 px-8 shadow-lg">
                 Next Step
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button className="border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-6 px-8 shadow-lg">
+              <Button variant="outline" className="border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-6 px-8 shadow-lg">
                 Questions?
               </Button>
             </Link>
