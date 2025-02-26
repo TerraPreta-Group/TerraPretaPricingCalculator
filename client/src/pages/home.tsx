@@ -174,6 +174,20 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center text-[#011028]">
             Pellet Pricing Estimator
+            <HelpIcon 
+              content={
+                <div className="space-y-2">
+                  <p>Get an instant quote for your agricultural pellet needs.</p>
+                  <p>This calculator helps you:</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>Calculate required product based on area</li>
+                    <li>Estimate delivery costs</li>
+                    <li>Get total pricing including shipping</li>
+                  </ul>
+                </div>
+              }
+              side="right"
+            />
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -185,6 +199,19 @@ export default function Home() {
                 className="block mb-2 text-xl font-medium text-[#011028]"
               >
                 Calculate Area By
+                <HelpIcon 
+                  content={
+                    <div className="space-y-2">
+                      <p>Choose how you want to calculate your area:</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li><strong>Number of Wellsites:</strong> For standard 100m × 100m wellsites</li>
+                        <li><strong>Custom Area:</strong> Enter area in your preferred unit</li>
+                        <li><strong>Length × Width:</strong> Calculate area from dimensions</li>
+                      </ul>
+                    </div>
+                  }
+                  side="right"
+                />
               </Label>
               <Select
                 value={areaInputMethod}
@@ -211,7 +238,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Conditional Input Sections */}
           {areaInputMethod === "wellsites" && (
             <div className="space-y-4">
               <div className="text-center">
@@ -358,7 +384,22 @@ export default function Home() {
                 <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Cost per lb
+                  <HelpIcon 
+                    content={
+                      <div className="space-y-2">
+                        <p>Choose your pricing tier:</p>
+                        <ul className="list-disc pl-4 space-y-1">
+                          <li><strong>$1.50/lb:</strong> Bulk rate for large orders</li>
+                          <li><strong>$1.75/lb:</strong> Standard rate</li>
+                        </ul>
+                        <p className="text-xs mt-2">Contact us for custom pricing on very large orders.</p>
+                      </div>
+                    }
+                    side="bottom"
+                  />
+                </TableCell>
                 <TableCell className="text-base text-center pr-8">
                   <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
                     <SelectTrigger className="w-[100px] mx-auto">
@@ -470,6 +511,16 @@ export default function Home() {
                           placeholder="Enter town name"
                           className="w-[200px] text-[#011028]"
                         />
+                        <HelpIcon 
+                          content={
+                            <div className="space-y-2">
+                              <p>Enter a town or city name in Alberta.</p>
+                              <p>Format: <em>Town Name, AB</em></p>
+                              <p>Example: "Red Deer, AB" or "Edmonton, AB"</p>
+                            </div>
+                          }
+                          side="right"
+                        />
                         <div className="flex items-center gap-2 text-sm text-[#011028]">
                           {deliveryLocation ? (
                             isCalculatingDistance ? (
@@ -491,6 +542,24 @@ export default function Home() {
                       </div>
                     ) : (
                       <div className="mt-4">
+                        <div className="flex items-center justify-center mb-2">
+                          <span className="text-sm font-medium text-[#011028]">Legal Subdivision (LSD) Location</span>
+                          <HelpIcon 
+                            content={
+                              <div className="space-y-2">
+                                <p>Enter your location using the Alberta Township System (ATS):</p>
+                                <ul className="list-disc pl-4 space-y-1">
+                                  <li><strong>LSD:</strong> Legal Subdivision (1-16)</li>
+                                  <li><strong>Section:</strong> Section number (1-36)</li>
+                                  <li><strong>Township:</strong> Township number</li>
+                                  <li><strong>Range:</strong> Range number</li>
+                                  <li><strong>Meridian:</strong> W4, W5, or W6</li>
+                                </ul>
+                              </div>
+                            }
+                            side="top"
+                          />
+                        </div>
                         <LSDSelector value={lsdCoords} onChange={setLsdCoords} />
                         <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
                           {isCalculatingDistance ? (
