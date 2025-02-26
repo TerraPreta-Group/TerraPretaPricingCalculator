@@ -32,6 +32,7 @@ const CONVERSION_RATES = {
 };
 
 export default function Home() {
+  const [areaInputMethod, setAreaInputMethod] = useState<"wellsites" | "area" | "dimensions">("wellsites");
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
   const [length, setLength] = useState<string>("");
@@ -57,6 +58,12 @@ export default function Home() {
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setArea(value);
+      // Clear other input methods when using direct area input
+      if (value) {
+        setLength("");
+        setWidth("");
+        setWellsites("");
+      }
     }
   };
 
@@ -148,109 +155,149 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* New Wellsites Section */}
+          {/* Area Input Method Selector */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="wellsites" className="block mb-2 text-xl font-medium text-[#011028]">Number of Wellsites</Label>
-              <div className="flex gap-4 justify-center items-center">
-                <Input
-                  id="wellsites"
-                  type="text"
-                  value={wellsites}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d*$/.test(value)) {
-                      setWellsites(value);
-                      if (value) {
-                        // Each wellsite is 100m x 100m = 10000 sqm
-                        const totalSqMeters = parseInt(value) * 10000;
-                        const acres = (totalSqMeters * CONVERSION_RATES.sqm_to_acre).toFixed(2);
-                        setArea(acres);
-                        setUnit("acre");
+              <Label htmlFor="areaMethod" className="block mb-2 text-xl font-medium text-[#011028]">
+                Calculate Area By
+              </Label>
+              <Select
+                value={areaInputMethod}
+                onValueChange={(value) => {
+                  setAreaInputMethod(value as "wellsites" | "area" | "dimensions");
+                  // Clear all inputs when changing method
+                  setArea("");
+                  setLength("");
+                  setWidth("");
+                  setWellsites("");
+                }}
+              >
+                <SelectTrigger className="w-[200px] mx-auto">
+                  <SelectValue placeholder="Select calculation method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="wellsites">Number of Wellsites</SelectItem>
+                  <SelectItem value="area">Custom Area</SelectItem>
+                  <SelectItem value="dimensions">Length × Width</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Conditional Input Sections */}
+          {areaInputMethod === "wellsites" && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <Label htmlFor="wellsites" className="block mb-2 text-lg font-medium text-[#011028]">
+                  Number of Wellsites
+                </Label>
+                <div className="flex gap-4 justify-center items-center">
+                  <Input
+                    id="wellsites"
+                    type="text"
+                    value={wellsites}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "" || /^\d*$/.test(value)) {
+                        setWellsites(value);
+                        if (value) {
+                          const totalSqMeters = parseInt(value) * 10000;
+                          const acres = (totalSqMeters * CONVERSION_RATES.sqm_to_acre).toFixed(2);
+                          setArea(acres);
+                          setUnit("acre");
+                        } else {
+                          setArea("");
+                        }
                       }
-                    }
-                  }}
-                  placeholder="Enter number"
-                  className="w-[120px] text-[#011028]"
-                />
-                <span className="text-sm text-[#011028]">100m × 100m</span>
+                    }}
+                    placeholder="Enter number"
+                    className="w-[120px] text-[#011028]"
+                  />
+                  <span className="text-sm text-[#011028]">100m × 100m per site</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Existing Area Input Section */}
-          <div className="space-y-4">
-            <div className="text-center">
-              <Label htmlFor="area" className="block mb-2 text-xl font-medium text-[#011028]">Custom Area</Label>
-              <div className="flex gap-4 justify-center">
-                <Input
-                  id="area"
-                  type="text"
-                  value={area}
-                  onChange={(e) => handleAreaChange(e.target.value)}
-                  placeholder="Enter area..."
-                  className="w-[120px] text-[#011028]"
-                />
-                <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Select unit" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sqft">Square Feet</SelectItem>
-                    <SelectItem value="sqm">Square Meters</SelectItem>
-                    <SelectItem value="acre">Acres</SelectItem>
-                    <SelectItem value="ha">Hectares</SelectItem>
-                  </SelectContent>
-                </Select>
+          {areaInputMethod === "area" && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <Label htmlFor="area" className="block mb-2 text-lg font-medium text-[#011028]">
+                  Custom Area
+                </Label>
+                <div className="flex gap-4 justify-center">
+                  <Input
+                    id="area"
+                    type="text"
+                    value={area}
+                    onChange={(e) => handleAreaChange(e.target.value)}
+                    placeholder="Enter area"
+                    className="w-[120px] text-[#011028]"
+                  />
+                  <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sqft">Square Feet</SelectItem>
+                      <SelectItem value="sqm">Square Meters</SelectItem>
+                      <SelectItem value="acre">Acres</SelectItem>
+                      <SelectItem value="ha">Hectares</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Custom Area Section */}
-          <div className="space-y-4">
-            <div className="text-center">
-              <Label className="block mb-2 text-xl font-medium text-[#011028]">Custom Area</Label>
-              <div className="flex items-center gap-4 justify-center">
-                <Input
-                  type="text"
-                  value={length}
-                  onChange={(e) => handleNumericInput(e.target.value, setLength)}
-                  placeholder="Length"
-                  className="w-[100px] text-[#011028]"
-                />
-                <span className="text-lg font-bold text-[#011028]">×</span>
-                <Input
-                  type="text"
-                  value={width}
-                  onChange={(e) => handleNumericInput(e.target.value, setWidth)}
-                  placeholder="Width"
-                  className="w-[100px] text-[#011028]"
-                />
-                <span className="text-lg font-bold text-[#011028]">=</span>
-                <Input
-                  type="text"
-                  value={customArea}
-                  readOnly
-                  placeholder="Area"
-                  className="w-[100px] bg-muted text-[#011028]"
-                />
-                <Select value={customUnit} onValueChange={(value) => {
-                  setCustomUnit(value as UnitType);
-                  setUnit(value as UnitType);
-                }}>
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Select unit" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sqft">Square Feet</SelectItem>
-                    <SelectItem value="sqm">Square Meters</SelectItem>
-                    <SelectItem value="acre">Acres</SelectItem>
-                    <SelectItem value="ha">Hectares</SelectItem>
-                  </SelectContent>
-                </Select>
+          {areaInputMethod === "dimensions" && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <Label className="block mb-2 text-lg font-medium text-[#011028]">
+                  Area by Dimensions
+                </Label>
+                <div className="flex items-center gap-4 justify-center">
+                  <Input
+                    type="text"
+                    value={length}
+                    onChange={(e) => handleNumericInput(e.target.value, setLength)}
+                    placeholder="Length"
+                    className="w-[100px] text-[#011028]"
+                  />
+                  <span className="text-lg font-bold text-[#011028]">×</span>
+                  <Input
+                    type="text"
+                    value={width}
+                    onChange={(e) => handleNumericInput(e.target.value, setWidth)}
+                    placeholder="Width"
+                    className="w-[100px] text-[#011028]"
+                  />
+                  <span className="text-lg font-bold text-[#011028]">=</span>
+                  <Input
+                    type="text"
+                    value={customArea}
+                    readOnly
+                    placeholder="Area"
+                    className="w-[100px] bg-muted text-[#011028]"
+                  />
+                  <Select value={customUnit} onValueChange={(value) => {
+                    setCustomUnit(value as UnitType);
+                    setUnit(value as UnitType);
+                  }}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sqft">Square Feet</SelectItem>
+                      <SelectItem value="sqm">Square Meters</SelectItem>
+                      <SelectItem value="acre">Acres</SelectItem>
+                      <SelectItem value="ha">Hectares</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Rates and Results Table */}
           <Table>
