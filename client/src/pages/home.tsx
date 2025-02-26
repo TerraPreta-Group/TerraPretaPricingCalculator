@@ -536,33 +536,33 @@ export default function Home() {
           </div>
 
           {/* Final Cost Breakdown */}
-          <Table>
-            <TableBody>
-              <TableRow className="bg-gray-200 border-2 border-black rounded-lg overflow-hidden">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">
-                  Pellets
-                </TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
-              </TableRow>
+          <div className="space-y-2">
+            <div className="p-4 border-2 rounded-lg bg-gray-200/50 w-full border-gray-200 hover:border-[#003703]/50">
+              <div className="flex items-center justify-between">
+                <div className="font-bold text-xl text-[#011028]">Pellets</div>
+                <div className="text-xl font-bold text-[#011028]">${formatNumber(pelletsCost)}</div>
+              </div>
+            </div>
 
-              {pickup === "no" && deliveryDistance && (
-                <TableRow className="bg-gray-200 border-2 border-black rounded-lg overflow-hidden">
-                  <TableCell className="font-bold text-xl text-center text-[#011028]">
-                    Delivery
-                    <div className="text-sm font-normal text-[#011028]/70 mt-1">Round trip · $150/hour including travel time</div>
-                  </TableCell>
-                  <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
-                    ${formatNumber(deliveryCost)}
-                  </TableCell>
-                </TableRow>
-              )}
+            {pickup === "no" && deliveryDistance && (
+              <div className="p-4 border-2 rounded-lg bg-gray-200/50 w-full border-gray-200 hover:border-[#003703]/50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-xl text-[#011028]">Delivery</div>
+                    <div className="text-sm font-normal text-[#011028]/70">Round trip · $150/hour including travel time</div>
+                  </div>
+                  <div className="text-xl font-bold text-[#011028]">${formatNumber(deliveryCost)}</div>
+                </div>
+              </div>
+            )}
 
-              <TableRow className="bg-green-100 border-2 border-black border-t-4 rounded-lg overflow-hidden">
-                <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
-                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+            <div className="p-4 border-2 rounded-lg bg-green-100 w-full border-[#003703] border-t-4">
+              <div className="flex items-center justify-between">
+                <div className="font-bold text-2xl text-[#011028]">Total Cost</div>
+                <div className="text-2xl font-bold text-[#011028]">${formatNumber(totalCost)}</div>
+              </div>
+            </div>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
