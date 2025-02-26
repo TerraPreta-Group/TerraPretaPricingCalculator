@@ -131,10 +131,10 @@ export default function Home() {
   const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <Card className="w-full max-w-xl border-2 border-black">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#011028] to-black p-4">
+      <Card className="w-full max-w-xl border-[1px] border-white/10 bg-white/95 shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-[#011028]">
             Pellet Pricing Estimator
           </CardTitle>
         </CardHeader>
@@ -142,7 +142,7 @@ export default function Home() {
           {/* New Wellsites Section */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="wellsites" className="block mb-2 text-xl font-medium">Number of Wellsites</Label>
+              <Label htmlFor="wellsites" className="block mb-2 text-xl font-medium text-[#011028]">Number of Wellsites</Label>
               <div className="flex gap-4 justify-center items-center">
                 <Input
                   id="wellsites"
@@ -162,9 +162,9 @@ export default function Home() {
                     }
                   }}
                   placeholder="Enter number"
-                  className="w-[120px]"
+                  className="w-[120px] text-[#011028]"
                 />
-                <span className="text-sm">100m × 100m</span>
+                <span className="text-sm text-[#011028]">100m × 100m</span>
               </div>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function Home() {
           {/* Existing Area Input Section */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="area" className="block mb-2 text-xl font-medium">Custom Area</Label>
+              <Label htmlFor="area" className="block mb-2 text-xl font-medium text-[#011028]">Custom Area</Label>
               <div className="flex gap-4 justify-center">
                 <Input
                   id="area"
@@ -180,7 +180,7 @@ export default function Home() {
                   value={area}
                   onChange={(e) => handleAreaChange(e.target.value)}
                   placeholder="Enter area..."
-                  className="w-[120px]"
+                  className="w-[120px] text-[#011028]"
                 />
                 <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
                   <SelectTrigger className="w-[140px]">
@@ -200,30 +200,30 @@ export default function Home() {
           {/* Custom Area Section */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label className="block mb-2 text-xl font-medium">Custom Area</Label>
+              <Label className="block mb-2 text-xl font-medium text-[#011028]">Custom Area</Label>
               <div className="flex items-center gap-4 justify-center">
                 <Input
                   type="text"
                   value={length}
                   onChange={(e) => handleNumericInput(e.target.value, setLength)}
                   placeholder="Length"
-                  className="w-[100px]"
+                  className="w-[100px] text-[#011028]"
                 />
-                <span className="text-lg font-bold">×</span>
+                <span className="text-lg font-bold text-[#011028]">×</span>
                 <Input
                   type="text"
                   value={width}
                   onChange={(e) => handleNumericInput(e.target.value, setWidth)}
                   placeholder="Width"
-                  className="w-[100px]"
+                  className="w-[100px] text-[#011028]"
                 />
-                <span className="text-lg font-bold">=</span>
+                <span className="text-lg font-bold text-[#011028]">=</span>
                 <Input
                   type="text"
                   value={customArea}
                   readOnly
                   placeholder="Area"
-                  className="w-[100px] bg-muted"
+                  className="w-[100px] bg-muted text-[#011028]"
                 />
                 <Select value={customUnit} onValueChange={(value) => {
                   setCustomUnit(value as UnitType);
@@ -247,11 +247,11 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Recommended Application Rate</TableCell>
-                <TableCell className="text-base text-center pr-8">1500 lbs per Acre</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Recommended Application Rate</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Cost per lb</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
                 <TableCell className="text-base text-center pr-8">
                   <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
                     <SelectTrigger className="w-[100px] mx-auto">
@@ -267,37 +267,37 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Pellets</TableCell>
-                <TableCell className="text-base text-center pr-8">{Math.round(requiredProduct)} lbs</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">
+                <TableCell className="font-medium text-base text-center text-[#011028]">
                   <div className="space-y-1">
                     <div>Tote Bags</div>
                     <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
                   </div>
                 </TableCell>
-                <TableCell className="text-base text-center pr-8">{toteBags} bags</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{toteBags} bags</TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Pellets</TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(pelletsCost)}</TableCell>
+                <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Pickup from Sundre</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Pickup from Sundre</TableCell>
                 <TableCell>
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
                       <Button
                         variant={pickup === "yes" ? "default" : "outline"}
-                        className="w-[100px]"
+                        className="w-[100px] text-[#011028]"
                         onClick={() => setPickup("yes")}
                       >
                         Yes
                       </Button>
                       <Button
                         variant={pickup === "no" ? "default" : "outline"}
-                        className="w-[100px]"
+                        className="w-[100px] text-[#011028]"
                         onClick={() => setPickup("no")}
                       >
                         No
@@ -307,21 +307,21 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center">Delivery from Sundre</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Delivery from Sundre</TableCell>
                 <TableCell>
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
                       <Button
                         variant={locationType === "town" ? "default" : "outline"}
                         onClick={() => setLocationType("town")}
-                        className="w-[100px]"
+                        className="w-[100px] text-[#011028]"
                       >
                         Town
                       </Button>
                       <Button
                         variant={locationType === "lsd" ? "default" : "outline"}
                         onClick={() => setLocationType("lsd")}
-                        className="w-[100px]"
+                        className="w-[100px] text-[#011028]"
                       >
                         LSD
                       </Button>
@@ -334,9 +334,9 @@ export default function Home() {
                           value={deliveryLocation}
                           onChange={(e) => setDeliveryLocation(e.target.value)}
                           placeholder="Enter town name"
-                          className="w-[200px]"
+                          className="w-[200px] text-[#011028]"
                         />
-                        <div className="flex items-center gap-2 text-sm">
+                        <div className="flex items-center gap-2 text-sm text-[#011028]">
                           {deliveryLocation ? (
                             isCalculatingDistance ? (
                               <span className="text-muted-foreground">Calculating distance...</span>
@@ -354,7 +354,7 @@ export default function Home() {
                           value={lsdCoords}
                           onChange={setLsdCoords}
                         />
-                        <div className="flex flex-col items-center gap-2 justify-center text-sm">
+                        <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
                           {isCalculatingDistance ? (
                             <span className="text-muted-foreground">Calculating distance...</span>
                           ) : (
@@ -391,12 +391,12 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center">Delivery<br/><span className="text-sm font-normal">(Round Trip)</span></TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8">${formatNumber(deliveryCost)}</TableCell>
+                <TableCell className="font-bold text-xl text-center text-[#011028]">Delivery<br/><span className="text-sm font-normal text-[#011028]">(Round Trip)</span></TableCell>
+                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
-                <TableCell className="font-bold text-2xl text-center">Total Cost</TableCell>
-                <TableCell className="text-2xl font-bold text-primary text-center pr-8">${formatNumber(totalCost)}</TableCell>
+                <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
+                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -404,18 +404,18 @@ export default function Home() {
           {/* Action Buttons */}
           <div className="flex gap-4 justify-center pt-4">
             <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
-              <Button className="bg-primary hover:bg-primary/90 text-lg py-6 px-8">
+              <Button className="bg-[#003703] hover:bg-[#003703]/90 text-white text-lg py-6 px-8 shadow-lg">
                 Next Step
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white text-lg py-6 px-8">
+              <Button className="bg-[#011028] hover:bg-[#011028]/90 text-white text-lg py-6 px-8 shadow-lg">
                 Questions?
               </Button>
             </Link>
           </div>
 
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-[#011028]/70 text-center">
             All calculations are automatically converted to acres. Note: 1 hectare is approximately 2.47 acres.
           </p>
 
