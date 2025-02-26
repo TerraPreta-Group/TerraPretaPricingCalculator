@@ -415,10 +415,10 @@ export default function Home() {
                   Shipping Method
                   <HelpIcon content="Choose between pickup from our Sundre location or delivery via TerraPreta Express hotshot service." />
                 </TableCell>
-                <TableCell>
-                  <div className="space-y-2">
+                <TableCell className="space-y-2">
+                  <div className="w-full space-y-2">
                     <div 
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
                         pickup === "yes" 
                           ? "border-[#003703] bg-[#003703]/5" 
                           : "border-gray-200 hover:border-[#003703]/50"
@@ -439,7 +439,7 @@ export default function Home() {
                     </div>
 
                     <div 
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
                         pickup === "no" 
                           ? "border-[#003703] bg-[#003703]/5" 
                           : "border-gray-200 hover:border-[#003703]/50"
