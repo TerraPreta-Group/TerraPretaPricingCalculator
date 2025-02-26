@@ -38,6 +38,10 @@ const CONVERSION_RATES = {
   sqm_to_acre: 0.000247105,
 };
 
+const determinePricePerLb = (productAmount: number): number => {
+  return productAmount >= 50000 ? 1.50 : 1.75;
+};
+
 export default function Home() {
   const [areaInputMethod, setAreaInputMethod] = useState<
     "wellsites" | "area" | "dimensions"
@@ -60,7 +64,6 @@ export default function Home() {
     range: "",
     meridian: "W4",
   });
-  const [pricePerLb, setPricePerLb] = useState<number>(1.75);
   const [wellsites, setWellsites] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false); // Added state for loading
 
@@ -154,6 +157,7 @@ export default function Home() {
 
   const acres = area ? convertToAcres(parseFloat(area), unit) : 0;
   const requiredProduct = calculateRequiredProduct(acres);
+  const pricePerLb = determinePricePerLb(requiredProduct);
   const pelletsCost = calculateCost(requiredProduct, pricePerLb);
   const toteBags = calculateToteBags(requiredProduct);
   const deliveryCost = deliveryDistance
@@ -389,27 +393,24 @@ export default function Home() {
                   <HelpIcon 
                     content={
                       <div className="space-y-2">
-                        <p>Choose your pricing tier:</p>
+                        <p>Our tiered pricing structure:</p>
                         <ul className="list-disc pl-4 space-y-1">
-                          <li><strong>$1.50/lb:</strong> Bulk rate for large orders</li>
-                          <li><strong>$1.75/lb:</strong> Standard rate</li>
+                          <li><strong>Standard Rate ($1.75/lb):</strong> Orders under 50,000 lbs</li>
+                          <li><strong>Bulk Rate ($1.50/lb):</strong> Orders of 50,000 lbs or more</li>
                         </ul>
-                        <p className="text-xs mt-2">Contact us for custom pricing on very large orders.</p>
+                        <p className="text-xs mt-2">Your price is automatically calculated based on your order size.</p>
                       </div>
                     }
                     side="bottom"
                   />
                 </TableCell>
                 <TableCell className="text-base text-center pr-8">
-                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
-                    <SelectTrigger className="w-[100px] mx-auto">
-                      <SelectValue>${pricePerLb.toFixed(2)}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1.50">$1.50</SelectItem>
-                      <SelectItem value="1.75">$1.75</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col items-center">
+                    <span className="font-semibold">${pricePerLb.toFixed(2)}/lb</span>
+                    <span className="text-sm text-muted-foreground">
+                      {requiredProduct >= 50000 ? "Bulk Rate Applied" : "Standard Rate"}
+                    </span>
+                  </div>
                 </TableCell>
               </TableRow>
               <TableRow>
