@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { HelpIcon } from "@/components/ui/help-icon";
+import { ArrowLeft } from "lucide-react";
 
 interface ContactFormData {
   name: string;
@@ -28,7 +30,7 @@ export default function Contact() {
   const { toast } = useToast();
   const params = new URLSearchParams(window.location.search);
   const isOrder = params.get("type") === "order";
-  
+
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     phone: "",
@@ -62,7 +64,6 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Only include product and cost for order requests
       const submitData = {
         ...formData,
         type: isOrder ? "order" : "call",
@@ -109,146 +110,205 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <Card className="w-full max-w-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            {isOrder ? "Complete Your Order" : "Schedule a Call"}
-          </CardTitle>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#011028] to-black p-4">
+      <Card className="w-full max-w-xl border-[1px] border-white/10 bg-white/95 shadow-2xl">
+        <CardHeader className="space-y-2">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-2 text-[#011028] hover:text-[#011028]/70"
+              onClick={() => setLocation("/")}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <CardTitle className="text-2xl font-bold text-[#011028]">
+              {isOrder ? "Complete Your Order" : "Schedule a Call"}
+            </CardTitle>
+          </div>
+          {isOrder && (
+            <div className="text-sm text-muted-foreground">
+              Ordering for {formData.acres} acres • ${params.get("cost")}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-center block w-full">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <Label className="text-lg font-medium text-[#011028]">Contact Information</Label>
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-center block w-full">Phone Number</Label>
+                <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                 <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
+                  id="name"
+                  name="name"
                   required
-                  value={formData.phone}
+                  value={formData.name}
                   onChange={handleInputChange}
+                  className="border-2 focus:border-[#003703]"
+                  placeholder="Enter your full name"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-center block w-full">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company" className="text-center block w-full">Company Name</Label>
-              <Input
-                id="company"
-                name="company"
-                required
-                value={formData.company}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="street" className="text-center block w-full">Street Address</Label>
-              <Input
-                id="street"
-                name="street"
-                required
-                value={formData.street}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city" className="text-center block w-full">City</Label>
-                <Input
-                  id="city"
-                  name="city"
-                  required
-                  value={formData.city}
-                  onChange={handleInputChange}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="(xxx) xxx-xxxx"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="email@example.com"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="province" className="text-center block w-full">Province</Label>
+                <Label htmlFor="company" className="text-sm font-medium">Company Name</Label>
                 <Input
-                  id="province"
-                  name="province"
+                  id="company"
+                  name="company"
                   required
-                  value={formData.province}
+                  value={formData.company}
                   onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="postalCode" className="text-center block w-full">Postal Code</Label>
-                <Input
-                  id="postalCode"
-                  name="postalCode"
-                  required
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
+                  className="border-2 focus:border-[#003703]"
+                  placeholder="Enter company name"
                 />
               </div>
             </div>
+
+            <div className="space-y-4">
+              <Label className="text-lg font-medium text-[#011028]">Delivery Address</Label>
+              <div className="space-y-2">
+                <Label htmlFor="street" className="text-sm font-medium">Street Address</Label>
+                <Input
+                  id="street"
+                  name="street"
+                  required
+                  value={formData.street}
+                  onChange={handleInputChange}
+                  className="border-2 focus:border-[#003703]"
+                  placeholder="Enter street address"
+                />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="space-y-2 col-span-2 sm:col-span-1">
+                  <Label htmlFor="city" className="text-sm font-medium">City</Label>
+                  <Input
+                    id="city"
+                    name="city"
+                    required
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="City"
+                  />
+                </div>
+                <div className="space-y-2 col-span-2 sm:col-span-1">
+                  <Label htmlFor="province" className="text-sm font-medium">Province</Label>
+                  <Input
+                    id="province"
+                    name="province"
+                    required
+                    value={formData.province}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="Province"
+                  />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="postalCode" className="text-sm font-medium">Postal Code</Label>
+                  <Input
+                    id="postalCode"
+                    name="postalCode"
+                    required
+                    value={formData.postalCode}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="A1A 1A1"
+                  />
+                </div>
+              </div>
+            </div>
+
             {!isOrder && (
-              <div className="space-y-2">
-                <Label htmlFor="reason">Reason for Call</Label>
-                <Select
-                  name="reason"
-                  value={formData.reason}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, reason: value }))}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a reason" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pricing">Did Justin Trudeau set your prices?</SelectItem>
-                    <SelectItem value="impress">I need more info to impress my boss</SelectItem>
-                    <SelectItem value="commitment">I like it, I just have commitment issues</SelectItem>
-                    <SelectItem value="human">I just want to talk to a human</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="space-y-4">
+                <Label className="text-lg font-medium text-[#011028]">Additional Information</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="reason" className="text-sm font-medium">Reason for Call</Label>
+                  <Select
+                    name="reason"
+                    value={formData.reason}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, reason: value }))}
+                    required
+                  >
+                    <SelectTrigger className="border-2 focus:border-[#003703]">
+                      <SelectValue placeholder="Select a reason" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pricing">Did Justin Trudeau set your prices?</SelectItem>
+                      <SelectItem value="impress">I need more info to impress my boss</SelectItem>
+                      <SelectItem value="commitment">I like it, I just have commitment issues</SelectItem>
+                      <SelectItem value="human">I just want to talk to a human</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
+
             <div className="space-y-2">
-              <Label htmlFor="message">Message (250 characters max)</Label>
+              <Label htmlFor="message" className="text-sm font-medium">Additional Notes (Optional)</Label>
               <textarea
                 id="message"
                 name="message"
-                className="w-full min-h-[100px] px-3 py-2 rounded-md border border-input bg-background"
+                className="w-full min-h-[100px] px-3 py-2 rounded-md border-2 focus:border-[#003703] bg-background resize-none"
                 maxLength={250}
                 value={formData.message}
                 onChange={handleInputChange}
+                placeholder="Any additional information you'd like us to know..."
               />
               <div className="text-sm text-muted-foreground text-right">
                 {(formData.message?.length || 0)}/250 characters
               </div>
             </div>
+
             <div className="flex gap-4 justify-end pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setLocation("/")}
+                className="border-2 hover:bg-[#011028]/10 text-[#011028]"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit"}
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="bg-[#003703] hover:bg-[#003703]/90 text-white"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="opacity-0">Submit</span>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </div>
           </form>
