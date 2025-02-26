@@ -42,6 +42,11 @@ const determinePricePerLb = (productAmount: number): number => {
   return productAmount >= 50000 ? 1.50 : 1.75;
 };
 
+// Add validation helpers and visual feedback for area input
+const isAreaValid = (area: string): boolean => {
+  return area !== "" && parseFloat(area) > 0;
+};
+
 export default function Home() {
   const [areaInputMethod, setAreaInputMethod] = useState<
     "wellsites" | "area" | "dimensions"
@@ -66,6 +71,16 @@ export default function Home() {
   });
   const [wellsites, setWellsites] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false); // Added state for loading
+  const [areaError, setAreaError] = useState<string>("");
+
+  const validateArea = (): boolean => {
+    if (!area || parseFloat(area) <= 0) {
+      setAreaError("Please enter a valid area");
+      return false;
+    }
+    setAreaError("");
+    return true;
+  };
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -166,8 +181,14 @@ export default function Home() {
   const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
 
   const handleNextStep = async () => {
+    if (!validateArea()) {
+      // Scroll to area input and show error
+      const areaInput = document.getElementById("area-section");
+      areaInput?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate a short delay to show loading state
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
   };
@@ -195,12 +216,11 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Area Input Method Selector */}
-          <div className="space-y-4">
+          <div id="area-section" className="space-y-4">
             <div className="text-center">
               <Label
                 htmlFor="areaMethod"
-                className="block mb-2 text-xl font-medium text-[#011028]"
+                className={`block mb-2 text-xl font-medium ${areaError ? 'text-red-600' : 'text-[#011028]'}`}
               >
                 Calculate Area By
                 <HelpIcon 
@@ -217,6 +237,9 @@ export default function Home() {
                   side="right"
                 />
               </Label>
+              {areaError && (
+                <div className="text-sm text-red-600 mt-1">{areaError}</div>
+              )}
               <Select
                 value={areaInputMethod}
                 onValueChange={(value) => {
@@ -377,7 +400,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Rates and Results Table */}
           <Table>
             <TableBody>
               <TableRow>
@@ -432,8 +454,7 @@ export default function Home() {
             </TableBody>
           </Table>
 
-          {/* Shipping Method Section */}
-          <div className="space-y-4 w-full"> {/* Added w-full for full width */}
+          <div className="space-y-4 w-full">
             <div className="text-center">
               <Label className="text-lg font-medium text-[#011028] inline-flex items-center justify-center">
                 Shipping Method
@@ -605,7 +626,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Final Cost Breakdown */}
           <div className="space-y-2">
             <div className="p-4 border-2 rounded-lg bg-gray-200/50 w-full border-gray-200 hover:border-[#003703]/50">
               <div className="flex items-center justify-between">
@@ -634,16 +654,23 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link
               href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}
+              onClick={(e) => {
+                if (!validateArea()) {
+                  e.preventDefault();
+                  return;
+                }
+                handleNextStep();
+              }}
             >
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative"
-                onClick={handleNextStep}
-                disabled={isSubmitting}
+                className={`w-full sm:w-auto border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative ${
+                  !isAreaValid(area) ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isSubmitting || !isAreaValid(area)}
               >
                 {isSubmitting ? (
                   <>
