@@ -26,15 +26,22 @@ import { calculateDistance } from "@/lib/distance";
 import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
 import { lsdToLatLong } from "@/lib/lsd";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { HelpIcon } from "@/components/ui/help-icon";
 
 const CONVERSION_RATES = {
-  sqm_to_acre: 0.000247105
+  sqm_to_acre: 0.000247105,
 };
 
 export default function Home() {
-  const [areaInputMethod, setAreaInputMethod] = useState<"wellsites" | "area" | "dimensions">("wellsites");
+  const [areaInputMethod, setAreaInputMethod] = useState<
+    "wellsites" | "area" | "dimensions"
+  >("wellsites");
   const [area, setArea] = useState<string>("");
   const [unit, setUnit] = useState<UnitType>("acre");
   const [length, setLength] = useState<string>("");
@@ -51,7 +58,7 @@ export default function Home() {
     section: "",
     township: "",
     range: "",
-    meridian: "W4"
+    meridian: "W4",
   });
   const [pricePerLb, setPricePerLb] = useState<number>(1.75);
   const [wellsites, setWellsites] = useState<string>("");
@@ -69,13 +76,20 @@ export default function Home() {
     }
   };
 
-  const handleNumericInput = (value: string, setter: (value: string) => void) => {
+  const handleNumericInput = (
+    value: string,
+    setter: (value: string) => void,
+  ) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setter(value);
       if (setter === setLength || setter === setWidth) {
-        const newArea = value === "" || width === "" || length === ""
-          ? ""
-          : (parseFloat(value) * (setter === setLength ? parseFloat(width) : parseFloat(length))).toString();
+        const newArea =
+          value === "" || width === "" || length === ""
+            ? ""
+            : (
+                parseFloat(value) *
+                (setter === setLength ? parseFloat(width) : parseFloat(length))
+              ).toString();
         setCustomArea(newArea);
         setArea(newArea);
         setUnit(customUnit);
@@ -85,17 +99,18 @@ export default function Home() {
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if ((locationType === "town" && deliveryLocation.trim()) ||
-          (locationType === "lsd" && lsdCoords.lsd &&
-           lsdCoords.section && lsdCoords.township &&
-           lsdCoords.range)) {
-
+      if (
+        (locationType === "town" && deliveryLocation.trim()) ||
+        (locationType === "lsd" &&
+          lsdCoords.lsd &&
+          lsdCoords.section &&
+          lsdCoords.township &&
+          lsdCoords.range)
+      ) {
         setIsCalculatingDistance(true);
         try {
           const distance = await calculateDistance(
-            locationType === "town"
-              ? deliveryLocation.trim()
-              : lsdCoords
+            locationType === "town" ? deliveryLocation.trim() : lsdCoords,
           );
           setDeliveryDistance(distance.toString());
         } catch (error) {
@@ -115,7 +130,11 @@ export default function Home() {
   useEffect(() => {
     if (area && wellsites) {
       // Clear wellsites if area is manually changed
-      const wellsiteArea = (parseInt(wellsites) * 10000 * CONVERSION_RATES.sqm_to_acre).toFixed(2);
+      const wellsiteArea = (
+        parseInt(wellsites) *
+        10000 *
+        CONVERSION_RATES.sqm_to_acre
+      ).toFixed(2);
       if (area !== wellsiteArea) {
         setWellsites("");
       }
@@ -137,16 +156,17 @@ export default function Home() {
   const requiredProduct = calculateRequiredProduct(acres);
   const pelletsCost = calculateCost(requiredProduct, pricePerLb);
   const toteBags = calculateToteBags(requiredProduct);
-  const deliveryCost = deliveryDistance ? calculateDeliveryCost(parseFloat(deliveryDistance)) : 0;
+  const deliveryCost = deliveryDistance
+    ? calculateDeliveryCost(parseFloat(deliveryDistance))
+    : 0;
   const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
 
   const handleNextStep = async () => {
     setIsSubmitting(true);
     // Simulate a short delay to show loading state
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
   };
-
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#011028] to-black p-4">
@@ -160,13 +180,18 @@ export default function Home() {
           {/* Area Input Method Selector */}
           <div className="space-y-4">
             <div className="text-center">
-              <Label htmlFor="areaMethod" className="block mb-2 text-xl font-medium text-[#011028]">
+              <Label
+                htmlFor="areaMethod"
+                className="block mb-2 text-xl font-medium text-[#011028]"
+              >
                 Calculate Area By
               </Label>
               <Select
                 value={areaInputMethod}
                 onValueChange={(value) => {
-                  setAreaInputMethod(value as "wellsites" | "area" | "dimensions");
+                  setAreaInputMethod(
+                    value as "wellsites" | "area" | "dimensions",
+                  );
                   // Clear all inputs when changing method
                   setArea("");
                   setLength("");
@@ -190,7 +215,10 @@ export default function Home() {
           {areaInputMethod === "wellsites" && (
             <div className="space-y-4">
               <div className="text-center">
-                <Label htmlFor="wellsites" className="block mb-2 text-lg font-medium text-[#011028]">
+                <Label
+                  htmlFor="wellsites"
+                  className="block mb-2 text-lg font-medium text-[#011028]"
+                >
                   Number of Wellsites
                   <HelpIcon content="Each wellsite is calculated as a 100m × 100m area (1 hectare). This standardized size is used across the industry for consistent area calculations." />
                 </Label>
@@ -205,7 +233,9 @@ export default function Home() {
                         setWellsites(value);
                         if (value) {
                           const totalSqMeters = parseInt(value) * 10000;
-                          const acres = (totalSqMeters * CONVERSION_RATES.sqm_to_acre).toFixed(2);
+                          const acres = (
+                            totalSqMeters * CONVERSION_RATES.sqm_to_acre
+                          ).toFixed(2);
                           setArea(acres);
                           setUnit("acre");
                         } else {
@@ -216,7 +246,9 @@ export default function Home() {
                     placeholder="Enter number"
                     className="w-[120px] text-[#011028]"
                   />
-                  <span className="text-sm text-[#011028]">100m × 100m per site</span>
+                  <span className="text-sm text-[#011028]">
+                    100m × 100m per site
+                  </span>
                 </div>
               </div>
             </div>
@@ -225,7 +257,10 @@ export default function Home() {
           {areaInputMethod === "area" && (
             <div className="space-y-4">
               <div className="text-center">
-                <Label htmlFor="area" className="block mb-2 text-lg font-medium text-[#011028]">
+                <Label
+                  htmlFor="area"
+                  className="block mb-2 text-lg font-medium text-[#011028]"
+                >
                   Custom Area
                 </Label>
                 <div className="flex gap-4 justify-center">
@@ -237,7 +272,10 @@ export default function Home() {
                     placeholder="Enter area"
                     className="w-[120px] text-[#011028]"
                   />
-                  <Select value={unit} onValueChange={(value) => setUnit(value as UnitType)}>
+                  <Select
+                    value={unit}
+                    onValueChange={(value) => setUnit(value as UnitType)}
+                  >
                     <SelectTrigger className="w-[140px]">
                       <SelectValue placeholder="Select unit" />
                     </SelectTrigger>
@@ -263,7 +301,9 @@ export default function Home() {
                   <Input
                     type="text"
                     value={length}
-                    onChange={(e) => handleNumericInput(e.target.value, setLength)}
+                    onChange={(e) =>
+                      handleNumericInput(e.target.value, setLength)
+                    }
                     placeholder="Length"
                     className="w-[100px] text-[#011028]"
                   />
@@ -271,7 +311,9 @@ export default function Home() {
                   <Input
                     type="text"
                     value={width}
-                    onChange={(e) => handleNumericInput(e.target.value, setWidth)}
+                    onChange={(e) =>
+                      handleNumericInput(e.target.value, setWidth)
+                    }
                     placeholder="Width"
                     className="w-[100px] text-[#011028]"
                   />
@@ -283,10 +325,13 @@ export default function Home() {
                     placeholder="Area"
                     className="w-[100px] bg-muted text-[#011028]"
                   />
-                  <Select value={customUnit} onValueChange={(value) => {
-                    setCustomUnit(value as UnitType);
-                    setUnit(value as UnitType);
-                  }}>
+                  <Select
+                    value={customUnit}
+                    onValueChange={(value) => {
+                      setCustomUnit(value as UnitType);
+                      setUnit(value as UnitType);
+                    }}
+                  >
                     <SelectTrigger className="w-[140px]">
                       <SelectValue placeholder="Select unit" />
                     </SelectTrigger>
@@ -310,16 +355,21 @@ export default function Home() {
                   Recommended Application Rate
                   <HelpIcon content="Standard application rate for optimal soil stabilization and erosion control. This rate ensures proper coverage and effectiveness." />
                 </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">
+                  1500 lbs per Acre
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Cost per lb
+                </TableCell>
                 <TableCell className="text-base text-center pr-8">
-                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
+                  <Select
+                    value={pricePerLb.toString()}
+                    onValueChange={(value) => setPricePerLb(parseFloat(value))}
+                  >
                     <SelectTrigger className="w-[100px] mx-auto">
-                      <SelectValue>
-                        ${pricePerLb.toFixed(2)}
-                      </SelectValue>
+                      <SelectValue>${pricePerLb.toFixed(2)}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1.50">$1.50</SelectItem>
@@ -329,8 +379,12 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Pellets</TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">{Math.round(requiredProduct)} lbs</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Pellets
+                </TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">
+                  {Math.round(requiredProduct)} lbs
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-base text-center text-[#011028]">
@@ -339,151 +393,202 @@ export default function Home() {
                       Tote Bags
                       <HelpIcon content="Each tote bag has a capacity of 1000 lbs. We calculate the number of bags needed by rounding up to ensure you have enough product." />
                     </div>
-                    <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">{toteBags} bags</TableCell>
-              </TableRow>
-              <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Pickup from Sundre</TableCell>
-                <TableCell>
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="flex justify-center gap-4">
-                      <Button
-                        variant={pickup === "yes" ? "outline" : "outline"}
-                        className={`w-[100px] text-[#011028] ${pickup === "yes" ? "border-2 border-[#003703]" : ""}`}
-                        onClick={() => setPickup("yes")}
-                      >
-                        Yes
-                      </Button>
-                      <Button
-                        variant={pickup === "no" ? "outline" : "outline"}
-                        className={`w-[100px] text-[#011028] ${pickup === "no" ? "border-2 border-[#003703]" : ""}`}
-                        onClick={() => setPickup("no")}
-                      >
-                        No
-                      </Button>
+                    <div className="text-sm text-muted-foreground">
+                      1000 lbs/bag
                     </div>
                   </div>
                 </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="cursor-help">
-                        Delivery from Sundre
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Delivery rates are calculated per hour, round trip from Sundre at $150/hour</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <HelpIcon content="Delivery costs are calculated based on the round-trip distance and time from our Sundre location. The rate includes loading, transport, and return journey." />
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="flex justify-center gap-4">
-                      <Button
-                        variant={locationType === "town" ? "outline" : "outline"}
-                        onClick={() => setLocationType("town")}
-                        className={`w-[100px] text-[#011028] ${locationType === "town" ? "border-2 border-[#003703]" : ""}`}
-                      >
-                        Town
-                      </Button>
-                      <Button
-                        variant={locationType === "lsd" ? "outline" : "outline"}
-                        onClick={() => setLocationType("lsd")}
-                        className={`w-[100px] text-[#011028] ${locationType === "lsd" ? "border-2 border-[#003703]" : ""}`}
-                      >
-                        LSD
-                      </Button>
-                    </div>
-
-                    {locationType === "town" ? (
-                      <div className="flex items-center justify-center gap-4">
-                        <Input
-                          type="text"
-                          value={deliveryLocation}
-                          onChange={(e) => setDeliveryLocation(e.target.value)}
-                          placeholder="Enter town name"
-                          className="w-[200px] text-[#011028]"
-                        />
-                        <div className="flex items-center gap-2 text-sm text-[#011028]">
-                          {deliveryLocation ? (
-                            isCalculatingDistance ? (
-                              <span className="text-muted-foreground">Calculating distance...</span>
-                            ) : deliveryDistance ? (
-                              <span>{Math.round(parseFloat(deliveryDistance) * 2)} km • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs • $150/hr</span>
-                            ) : (
-                              <span className="text-muted-foreground">Please include the town name and province (e.g., Hanna, AB)</span>
-                            )
-                          ) : null}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <LSDSelector
-                          value={lsdCoords}
-                          onChange={setLsdCoords}
-                        />
-                        <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
-                          {isCalculatingDistance ? (
-                            <span className="text-muted-foreground">Calculating distance...</span>
-                          ) : (
-                            <>
-                              {lsdCoords.lsd && lsdCoords.section && lsdCoords.township && lsdCoords.range && (
-                                <div className="text-muted-foreground">
-                                  {(() => {
-                                    const coords = lsdToLatLong(lsdCoords);
-                                    return coords ? (
-                                      <span>
-                                        Calculated coordinates: {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-red-500">
-                                        Invalid coordinates - please check LSD values
-                                      </span>
-                                    );
-                                  })()}
-                                </div>
-                              )}
-                              {deliveryDistance ? (
-                                <span>{Math.round(parseFloat(deliveryDistance) * 2)} km round trip • {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr</span>
-                              ) : (
-                                <span className="text-muted-foreground">
-                                  Select all LSD values to calculate distance
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">
+                  {toteBags} bags
                 </TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center text-[#011028]">
-                  Delivery<br/>
-                  <div className="text-sm font-normal text-[#011028]/70 mt-1">Round trip · $150/hour including travel time</div>
+                  Pellets
                 </TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(deliveryCost)}</TableCell>
+                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
+                  ${formatNumber(pelletsCost)}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Shipping Method
+                  <HelpIcon content="Choose between pickup from our Sundre location or delivery via TerraPreta Express hotshot service." />
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-2">
+                    <div 
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                        pickup === "yes" 
+                          ? "border-[#003703] bg-[#003703]/5" 
+                          : "border-gray-200 hover:border-[#003703]/50"
+                      }`}
+                      onClick={() => setPickup("yes")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full border-2 ${
+                          pickup === "yes" 
+                            ? "border-[#003703] bg-[#003703]" 
+                            : "border-gray-300"
+                        }`} />
+                        <div>
+                          <div className="font-medium">Pickup from Sundre</div>
+                          <div className="text-sm text-muted-foreground">Free</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div 
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                        pickup === "no" 
+                          ? "border-[#003703] bg-[#003703]/5" 
+                          : "border-gray-200 hover:border-[#003703]/50"
+                      }`}
+                      onClick={() => setPickup("no")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full border-2 ${
+                          pickup === "no" 
+                            ? "border-[#003703] bg-[#003703]" 
+                            : "border-gray-300"
+                        }`} />
+                        <div>
+                          <div className="font-medium">TerraPreta Express Hotshot</div>
+                          <div className="text-sm text-muted-foreground">$150/hour including travel time</div>
+                        </div>
+                      </div>
+
+                      {pickup === "no" && (
+                        <div className="mt-4">
+                          <div className="text-sm font-medium mb-2">Delivery Location</div>
+                          <div className="flex justify-center gap-4">
+                            <Button
+                              variant={locationType === "town" ? "outline" : "outline"}
+                              onClick={() => setLocationType("town")}
+                              className={`w-[100px] text-[#011028] ${locationType === "town" ? "border-2 border-[#003703]" : ""}`}
+                            >
+                              Town
+                            </Button>
+                            <Button
+                              variant={locationType === "lsd" ? "outline" : "outline"}
+                              onClick={() => setLocationType("lsd")}
+                              className={`w-[100px] text-[#011028] ${locationType === "lsd" ? "border-2 border-[#003703]" : ""}`}
+                            >
+                              LSD
+                            </Button>
+                          </div>
+
+                          {locationType === "town" ? (
+                            <div className="flex items-center justify-center gap-4 mt-4">
+                              <Input
+                                type="text"
+                                value={deliveryLocation}
+                                onChange={(e) => setDeliveryLocation(e.target.value)}
+                                placeholder="Enter town name"
+                                className="w-[200px] text-[#011028]"
+                              />
+                              <div className="flex items-center gap-2 text-sm text-[#011028]">
+                                {deliveryLocation ? (
+                                  isCalculatingDistance ? (
+                                    <span className="text-muted-foreground">
+                                      Calculating distance...
+                                    </span>
+                                  ) : deliveryDistance ? (
+                                    <span>
+                                      {Math.round(parseFloat(deliveryDistance) * 2)} km •{" "}
+                                      {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs • $150/hr
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">
+                                      Please include the town name and province (e.g., Hanna, AB)
+                                    </span>
+                                  )
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-4">
+                              <LSDSelector value={lsdCoords} onChange={setLsdCoords} />
+                              <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
+                                {isCalculatingDistance ? (
+                                  <span className="text-muted-foreground">Calculating distance...</span>
+                                ) : (
+                                  <>
+                                    {lsdCoords.lsd && lsdCoords.section && lsdCoords.township && lsdCoords.range && (
+                                      <div className="text-muted-foreground">
+                                        {(() => {
+                                          const coords = lsdToLatLong(lsdCoords);
+                                          return coords ? (
+                                            <span>
+                                              Calculated coordinates: {coords.lat.toFixed(6)},{" "}
+                                              {coords.lng.toFixed(6)}
+                                            </span>
+                                          ) : (
+                                            <span className="text-red-500">
+                                              Invalid coordinates - please check LSD values
+                                            </span>
+                                          );
+                                        })()}
+                                      </div>
+                                    )}
+                                    {deliveryDistance ? (
+                                      <span>
+                                        {Math.round(parseFloat(deliveryDistance) * 2)} km round trip •{" "}
+                                        {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr
+                                      </span>
+                                    ) : (
+                                      <span className="text-muted-foreground">
+                                        Select all LSD values to calculate distance
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+
+              {pickup === "no" && deliveryDistance && (
+                <TableRow className="bg-gray-200 border-2 border-black">
+                  <TableCell className="font-bold text-xl text-center text-[#011028]">
+                    Delivery
+                    <div className="text-sm font-normal text-[#011028]/70 mt-1">Round trip · $150/hour including travel time</div>
+                  </TableCell>
+                  <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
+                    ${formatNumber(deliveryCost)}
+                  </TableCell>
+                </TableRow>
+              )}
+
+              <TableRow className="bg-gray-200 border-2 border-black">
+                <TableCell className="font-bold text-xl text-center text-[#011028]">
+                  Pellets
+                </TableCell>
+                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
+                  ${formatNumber(pelletsCost)}
+                </TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
-                <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
-                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
+                <TableCell className="font-bold text-2xl text-center text-[#011028]">
+                  Total Cost
+                </TableCell>
+                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">
+                  ${formatNumber(totalCost)}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
+            <Link
+              href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}
+            >
               <Button
                 variant="outline"
                 className="w-full sm:w-auto border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative"
@@ -513,9 +618,9 @@ export default function Home() {
           </div>
 
           <p className="text-xs text-[#011028]/70 text-center mt-4 px-4">
-            All calculations are automatically converted to acres. Note: 1 hectare is approximately 2.47 acres.
+            All calculations are automatically converted to acres. Note: 1
+            hectare is approximately 2.47 acres.
           </p>
-
         </CardContent>
       </Card>
     </div>
