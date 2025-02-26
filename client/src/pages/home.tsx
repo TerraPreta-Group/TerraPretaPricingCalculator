@@ -298,15 +298,15 @@ export default function Home() {
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
                       <Button
-                        variant={pickup === "yes" ? "default" : "outline"}
-                        className="w-[100px] text-[#011028]"
+                        variant={pickup === "yes" ? "outline" : "outline"}
+                        className={`w-[100px] text-[#011028] ${pickup === "yes" ? "border-2 border-[#003703]" : ""}`}
                         onClick={() => setPickup("yes")}
                       >
                         Yes
                       </Button>
                       <Button
-                        variant={pickup === "no" ? "default" : "outline"}
-                        className="w-[100px] text-[#011028]"
+                        variant={pickup === "no" ? "outline" : "outline"}
+                        className={`w-[100px] text-[#011028] ${pickup === "no" ? "border-2 border-[#003703]" : ""}`}
                         onClick={() => setPickup("no")}
                       >
                         No
@@ -321,16 +321,16 @@ export default function Home() {
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
                       <Button
-                        variant={locationType === "town" ? "default" : "outline"}
+                        variant={locationType === "town" ? "outline" : "outline"}
                         onClick={() => setLocationType("town")}
-                        className="w-[100px] text-[#011028]"
+                        className={`w-[100px] text-[#011028] ${locationType === "town" ? "border-2 border-[#003703]" : ""}`}
                       >
                         Town
                       </Button>
                       <Button
-                        variant={locationType === "lsd" ? "default" : "outline"}
+                        variant={locationType === "lsd" ? "outline" : "outline"}
                         onClick={() => setLocationType("lsd")}
-                        className="w-[100px] text-[#011028]"
+                        className={`w-[100px] text-[#011028] ${locationType === "lsd" ? "border-2 border-[#003703]" : ""}`}
                       >
                         LSD
                       </Button>
@@ -415,7 +415,7 @@ export default function Home() {
             <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-2 border-[#4d734f] hover:bg-[#4d734f]/10 text-[#4d734f] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative"
+                className="w-full sm:w-auto border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative"
                 onClick={handleNextStep}
                 disabled={isSubmitting}
               >
@@ -423,7 +423,7 @@ export default function Home() {
                   <>
                     <span className="opacity-0">Next Step</span>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="h-5 w-5 border-2 border-[#4d734f] border-t-transparent rounded-full animate-spin"></div>
+                      <div className="h-5 w-5 border-2 border-[#011028] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   </>
                 ) : (
@@ -434,7 +434,7 @@ export default function Home() {
             <Link href="/contact?type=call">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-2 border-[#4d734f] hover:bg-[#4d734f]/10 text-[#4d734f] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg"
+                className="w-full sm:w-auto border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg"
               >
                 Questions?
               </Button>
