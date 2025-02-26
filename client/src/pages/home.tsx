@@ -347,6 +347,151 @@ export default function Home() {
             </div>
           )}
 
+          {/* Shipping Method Section */}
+          <div className="space-y-4 w-full"> {/* Added w-full for full width */}
+            <div className="text-center">
+              <Label className="text-lg font-medium text-[#011028] inline-flex items-center justify-center">
+                Shipping Method
+                <HelpIcon content="Choose between pickup from our Sundre location or delivery via TerraPreta Express hotshot service." />
+              </Label>
+            </div>
+
+            <div className="space-y-2">
+              <div 
+                className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
+                  pickup === "yes" 
+                    ? "border-[#003703] bg-[#003703]/5" 
+                    : "border-gray-200 hover:border-[#003703]/50"
+                }`}
+                onClick={() => setPickup("yes")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    pickup === "yes" 
+                      ? "border-[#003703] bg-[#003703]" 
+                      : "border-gray-300"
+                  }`} />
+                  <div>
+                    <div className="font-medium">Pickup from Sundre</div>
+                    <div className="text-sm text-muted-foreground">Free</div>
+                  </div>
+                </div>
+              </div>
+
+              <div 
+                className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
+                  pickup === "no" 
+                    ? "border-[#003703] bg-[#003703]/5" 
+                    : "border-gray-200 hover:border-[#003703]/50"
+                }`}
+                onClick={() => setPickup("no")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    pickup === "no" 
+                      ? "border-[#003703] bg-[#003703]" 
+                      : "border-gray-300"
+                  }`} />
+                  <div>
+                    <div className="font-medium">TerraPreta Express Hotshot</div>
+                    <div className="text-sm text-muted-foreground">$150/hour including travel time</div>
+                  </div>
+                </div>
+
+                {pickup === "no" && (
+                  <div className="mt-4">
+                    <div className="text-sm font-medium mb-2">Delivery Location</div>
+                    <div className="flex justify-center gap-4">
+                      <Button
+                        variant={locationType === "town" ? "outline" : "outline"}
+                        onClick={() => setLocationType("town")}
+                        className={`w-[100px] text-[#011028] ${locationType === "town" ? "border-2 border-[#003703]" : ""}`}
+                      >
+                        Town
+                      </Button>
+                      <Button
+                        variant={locationType === "lsd" ? "outline" : "outline"}
+                        onClick={() => setLocationType("lsd")}
+                        className={`w-[100px] text-[#011028] ${locationType === "lsd" ? "border-2 border-[#003703]" : ""}`}
+                      >
+                        LSD
+                      </Button>
+                    </div>
+
+                    {locationType === "town" ? (
+                      <div className="flex items-center justify-center gap-4 mt-4">
+                        <Input
+                          type="text"
+                          value={deliveryLocation}
+                          onChange={(e) => setDeliveryLocation(e.target.value)}
+                          placeholder="Enter town name"
+                          className="w-[200px] text-[#011028]"
+                        />
+                        <div className="flex items-center gap-2 text-sm text-[#011028]">
+                          {deliveryLocation ? (
+                            isCalculatingDistance ? (
+                              <span className="text-muted-foreground">
+                                Calculating distance...
+                              </span>
+                            ) : deliveryDistance ? (
+                              <span>
+                                {Math.round(parseFloat(deliveryDistance) * 2)} km •{" "}
+                                {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs • $150/hr
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">
+                                Please include the town name and province (e.g., Hanna, AB)
+                              </span>
+                            )
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-4">
+                        <LSDSelector value={lsdCoords} onChange={setLsdCoords} />
+                        <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
+                          {isCalculatingDistance ? (
+                            <span className="text-muted-foreground">Calculating distance...</span>
+                          ) : (
+                            <>
+                              {lsdCoords.lsd && lsdCoords.section && lsdCoords.township && lsdCoords.range && (
+                                <div className="text-muted-foreground">
+                                  {(() => {
+                                    const coords = lsdToLatLong(lsdCoords);
+                                    return coords ? (
+                                      <span>
+                                        Calculated coordinates: {coords.lat.toFixed(6)},{" "}
+                                        {coords.lng.toFixed(6)}
+                                      </span>
+                                    ) : (
+                                      <span className="text-red-500">
+                                        Invalid coordinates - please check LSD values
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+                              {deliveryDistance ? (
+                                <span>
+                                  {Math.round(parseFloat(deliveryDistance) * 2)} km round trip •{" "}
+                                  {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground">
+                                  Select all LSD values to calculate distance
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Rates and Results Table */}
           <Table>
             <TableBody>
@@ -355,19 +500,12 @@ export default function Home() {
                   Recommended Application Rate
                   <HelpIcon content="Standard application rate for optimal soil stabilization and erosion control. This rate ensures proper coverage and effectiveness." />
                 </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">
-                  1500 lbs per Acre
-                </TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  Cost per lb
-                </TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
                 <TableCell className="text-base text-center pr-8">
-                  <Select
-                    value={pricePerLb.toString()}
-                    onValueChange={(value) => setPricePerLb(parseFloat(value))}
-                  >
+                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
                     <SelectTrigger className="w-[100px] mx-auto">
                       <SelectValue>${pricePerLb.toFixed(2)}</SelectValue>
                     </SelectTrigger>
@@ -379,12 +517,8 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  Pellets
-                </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">
-                  {Math.round(requiredProduct)} lbs
-                </TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{Math.round(requiredProduct)} lbs</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-base text-center text-[#011028]">
@@ -393,164 +527,14 @@ export default function Home() {
                       Tote Bags
                       <HelpIcon content="Each tote bag has a capacity of 1000 lbs. We calculate the number of bags needed by rounding up to ensure you have enough product." />
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      1000 lbs/bag
-                    </div>
+                    <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
                   </div>
                 </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">
-                  {toteBags} bags
-                </TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{toteBags} bags</TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">
-                  Pellets
-                </TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
-                  ${formatNumber(pelletsCost)}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  Shipping Method
-                  <HelpIcon content="Choose between pickup from our Sundre location or delivery via TerraPreta Express hotshot service." />
-                </TableCell>
-                <TableCell className="space-y-2">
-                  <div className="w-full space-y-2">
-                    <div 
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
-                        pickup === "yes" 
-                          ? "border-[#003703] bg-[#003703]/5" 
-                          : "border-gray-200 hover:border-[#003703]/50"
-                      }`}
-                      onClick={() => setPickup("yes")}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          pickup === "yes" 
-                            ? "border-[#003703] bg-[#003703]" 
-                            : "border-gray-300"
-                        }`} />
-                        <div>
-                          <div className="font-medium">Pickup from Sundre</div>
-                          <div className="text-sm text-muted-foreground">Free</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div 
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors w-full ${
-                        pickup === "no" 
-                          ? "border-[#003703] bg-[#003703]/5" 
-                          : "border-gray-200 hover:border-[#003703]/50"
-                      }`}
-                      onClick={() => setPickup("no")}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          pickup === "no" 
-                            ? "border-[#003703] bg-[#003703]" 
-                            : "border-gray-300"
-                        }`} />
-                        <div>
-                          <div className="font-medium">TerraPreta Express Hotshot</div>
-                          <div className="text-sm text-muted-foreground">$150/hour including travel time</div>
-                        </div>
-                      </div>
-
-                      {pickup === "no" && (
-                        <div className="mt-4">
-                          <div className="text-sm font-medium mb-2">Delivery Location</div>
-                          <div className="flex justify-center gap-4">
-                            <Button
-                              variant={locationType === "town" ? "outline" : "outline"}
-                              onClick={() => setLocationType("town")}
-                              className={`w-[100px] text-[#011028] ${locationType === "town" ? "border-2 border-[#003703]" : ""}`}
-                            >
-                              Town
-                            </Button>
-                            <Button
-                              variant={locationType === "lsd" ? "outline" : "outline"}
-                              onClick={() => setLocationType("lsd")}
-                              className={`w-[100px] text-[#011028] ${locationType === "lsd" ? "border-2 border-[#003703]" : ""}`}
-                            >
-                              LSD
-                            </Button>
-                          </div>
-
-                          {locationType === "town" ? (
-                            <div className="flex items-center justify-center gap-4 mt-4">
-                              <Input
-                                type="text"
-                                value={deliveryLocation}
-                                onChange={(e) => setDeliveryLocation(e.target.value)}
-                                placeholder="Enter town name"
-                                className="w-[200px] text-[#011028]"
-                              />
-                              <div className="flex items-center gap-2 text-sm text-[#011028]">
-                                {deliveryLocation ? (
-                                  isCalculatingDistance ? (
-                                    <span className="text-muted-foreground">
-                                      Calculating distance...
-                                    </span>
-                                  ) : deliveryDistance ? (
-                                    <span>
-                                      {Math.round(parseFloat(deliveryDistance) * 2)} km •{" "}
-                                      {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs • $150/hr
-                                    </span>
-                                  ) : (
-                                    <span className="text-muted-foreground">
-                                      Please include the town name and province (e.g., Hanna, AB)
-                                    </span>
-                                  )
-                                ) : null}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="mt-4">
-                              <LSDSelector value={lsdCoords} onChange={setLsdCoords} />
-                              <div className="flex flex-col items-center gap-2 justify-center text-sm text-[#011028]">
-                                {isCalculatingDistance ? (
-                                  <span className="text-muted-foreground">Calculating distance...</span>
-                                ) : (
-                                  <>
-                                    {lsdCoords.lsd && lsdCoords.section && lsdCoords.township && lsdCoords.range && (
-                                      <div className="text-muted-foreground">
-                                        {(() => {
-                                          const coords = lsdToLatLong(lsdCoords);
-                                          return coords ? (
-                                            <span>
-                                              Calculated coordinates: {coords.lat.toFixed(6)},{" "}
-                                              {coords.lng.toFixed(6)}
-                                            </span>
-                                          ) : (
-                                            <span className="text-red-500">
-                                              Invalid coordinates - please check LSD values
-                                            </span>
-                                          );
-                                        })()}
-                                      </div>
-                                    )}
-                                    {deliveryDistance ? (
-                                      <span>
-                                        {Math.round(parseFloat(deliveryDistance) * 2)} km round trip •{" "}
-                                        {calculateDeliveryHours(parseFloat(deliveryDistance))} hrs total • $150/hr
-                                      </span>
-                                    ) : (
-                                      <span className="text-muted-foreground">
-                                        Select all LSD values to calculate distance
-                                      </span>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TableCell>
+                <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
 
               {pickup === "no" && deliveryDistance && (
@@ -564,22 +548,9 @@ export default function Home() {
                   </TableCell>
                 </TableRow>
               )}
-
-              <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">
-                  Pellets
-                </TableCell>
-                <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">
-                  ${formatNumber(pelletsCost)}
-                </TableCell>
-              </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
-                <TableCell className="font-bold text-2xl text-center text-[#011028]">
-                  Total Cost
-                </TableCell>
-                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">
-                  ${formatNumber(totalCost)}
-                </TableCell>
+                <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
+                <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
