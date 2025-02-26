@@ -347,6 +347,49 @@ export default function Home() {
             </div>
           )}
 
+          {/* Rates and Results Table */}
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Recommended Application Rate
+                  <HelpIcon content="Standard application rate for optimal soil stabilization and erosion control. This rate ensures proper coverage and effectiveness." />
+                </TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
+                <TableCell className="text-base text-center pr-8">
+                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
+                    <SelectTrigger className="w-[100px] mx-auto">
+                      <SelectValue>${pricePerLb.toFixed(2)}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1.50">$1.50</SelectItem>
+                      <SelectItem value="1.75">$1.75</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-base text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{Math.round(requiredProduct)} lbs</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  <div className="space-y-1">
+                    <div>
+                      Tote Bags
+                      <HelpIcon content="Each tote bag has a capacity of 1000 lbs. We calculate the number of bags needed by rounding up to ensure you have enough product." />
+                    </div>
+                    <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-base text-center pr-8 text-[#011028]">{toteBags} bags</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+
           {/* Shipping Method Section */}
           <div className="space-y-4 w-full"> {/* Added w-full for full width */}
             <div className="text-center">
@@ -492,46 +535,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Rates and Results Table */}
+          {/* Final Cost Breakdown */}
           <Table>
             <TableBody>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  Recommended Application Rate
-                  <HelpIcon content="Standard application rate for optimal soil stabilization and erosion control. This rate ensures proper coverage and effectiveness." />
-                </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Cost per lb</TableCell>
-                <TableCell className="text-base text-center pr-8">
-                  <Select value={pricePerLb.toString()} onValueChange={(value) => setPricePerLb(parseFloat(value))}>
-                    <SelectTrigger className="w-[100px] mx-auto">
-                      <SelectValue>${pricePerLb.toFixed(2)}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1.50">$1.50</SelectItem>
-                      <SelectItem value="1.75">$1.75</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Pellets</TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">{Math.round(requiredProduct)} lbs</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">
-                  <div className="space-y-1">
-                    <div>
-                      Tote Bags
-                      <HelpIcon content="Each tote bag has a capacity of 1000 lbs. We calculate the number of bags needed by rounding up to ensure you have enough product." />
-                    </div>
-                    <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-base text-center pr-8 text-[#011028]">{toteBags} bags</TableCell>
-              </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
                 <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
@@ -548,6 +554,7 @@ export default function Home() {
                   </TableCell>
                 </TableRow>
               )}
+
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
                 <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
