@@ -26,6 +26,7 @@ import { calculateDistance } from "@/lib/distance";
 import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
 import { lsdToLatLong } from "@/lib/lsd";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const CONVERSION_RATES = {
   sqm_to_acre: 0.000247105
@@ -363,7 +364,18 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Delivery from Sundre</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="cursor-help">
+                        Delivery from Sundre
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delivery rates are calculated per hour, round trip from Sundre</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex justify-center gap-4">
@@ -447,7 +459,11 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               <TableRow className="bg-gray-200 border-2 border-black">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">Delivery<br/><span className="text-sm font-normal text-[#011028]">(Round Trip)</span></TableCell>
+                <TableCell className="font-bold text-xl text-center text-[#011028]">
+                  Delivery<br/>
+                  <span className="text-sm font-normal text-[#011028]">(Round Trip)</span>
+                  <div className="text-xs font-normal text-[#011028]/70 mt-1">$150/hour including travel time</div>
+                </TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(deliveryCost)}</TableCell>
               </TableRow>
               <TableRow className="bg-green-100 border-2 border-black border-t-4">
