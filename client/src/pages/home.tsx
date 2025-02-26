@@ -538,13 +538,13 @@ export default function Home() {
           {/* Final Cost Breakdown */}
           <Table>
             <TableBody>
-              <TableRow className="bg-gray-200 border-2 border-black">
+              <TableRow className="bg-gray-200 border-2 border-black rounded-lg overflow-hidden">
                 <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
 
               {pickup === "no" && deliveryDistance && (
-                <TableRow className="bg-gray-200 border-2 border-black">
+                <TableRow className="bg-gray-200 border-2 border-black rounded-lg overflow-hidden">
                   <TableCell className="font-bold text-xl text-center text-[#011028]">
                     Delivery
                     <div className="text-sm font-normal text-[#011028]/70 mt-1">Round trip · $150/hour including travel time</div>
@@ -555,7 +555,7 @@ export default function Home() {
                 </TableRow>
               )}
 
-              <TableRow className="bg-green-100 border-2 border-black border-t-4">
+              <TableRow className="bg-green-100 border-2 border-black border-t-4 rounded-lg overflow-hidden">
                 <TableCell className="font-bold text-2xl text-center text-[#011028]">Total Cost</TableCell>
                 <TableCell className="text-2xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(totalCost)}</TableCell>
               </TableRow>
