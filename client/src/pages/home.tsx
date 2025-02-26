@@ -27,6 +27,7 @@ import { LSDSelector } from "@/components/ui/lsd-selector";
 import { formatLSDLocation } from "@/lib/lsd";
 import { lsdToLatLong } from "@/lib/lsd";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpIcon } from "@/components/ui/help-icon";
 
 const CONVERSION_RATES = {
   sqm_to_acre: 0.000247105
@@ -191,6 +192,7 @@ export default function Home() {
               <div className="text-center">
                 <Label htmlFor="wellsites" className="block mb-2 text-lg font-medium text-[#011028]">
                   Number of Wellsites
+                  <HelpIcon content="Each wellsite is calculated as a 100m × 100m area (1 hectare). This standardized size is used across the industry for consistent area calculations." />
                 </Label>
                 <div className="flex gap-4 justify-center items-center">
                   <Input
@@ -304,7 +306,10 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium text-base text-center text-[#011028]">Recommended Application Rate</TableCell>
+                <TableCell className="font-medium text-base text-center text-[#011028]">
+                  Recommended Application Rate
+                  <HelpIcon content="Standard application rate for optimal soil stabilization and erosion control. This rate ensures proper coverage and effectiveness." />
+                </TableCell>
                 <TableCell className="text-base text-center pr-8 text-[#011028]">1500 lbs per Acre</TableCell>
               </TableRow>
               <TableRow>
@@ -330,7 +335,10 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium text-base text-center text-[#011028]">
                   <div className="space-y-1">
-                    <div>Tote Bags</div>
+                    <div>
+                      Tote Bags
+                      <HelpIcon content="Each tote bag has a capacity of 1000 lbs. We calculate the number of bags needed by rounding up to ensure you have enough product." />
+                    </div>
                     <div className="text-sm text-muted-foreground">1000 lbs/bag</div>
                   </div>
                 </TableCell>
@@ -371,10 +379,11 @@ export default function Home() {
                         Delivery from Sundre
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Delivery rates are calculated per hour, round trip from Sundre</p>
+                        <p>Delivery rates are calculated per hour, round trip from Sundre at $150/hour</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                  <HelpIcon content="Delivery costs are calculated based on the round-trip distance and time from our Sundre location. The rate includes loading, transport, and return journey." />
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col items-center gap-4">
