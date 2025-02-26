@@ -190,59 +190,61 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <Label className="text-lg font-medium text-[#011028]">Delivery Address</Label>
-              <div className="space-y-2">
-                <Label htmlFor="street" className="text-sm font-medium">Street Address</Label>
-                <Input
-                  id="street"
-                  name="street"
-                  required
-                  value={formData.street}
-                  onChange={handleInputChange}
-                  className="border-2 focus:border-[#003703]"
-                  placeholder="Enter street address"
-                />
+            {isOrder && (
+              <div className="space-y-4">
+                <Label className="text-lg font-medium text-[#011028]">Delivery Address</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="street" className="text-sm font-medium">Street Address</Label>
+                  <Input
+                    id="street"
+                    name="street"
+                    required
+                    value={formData.street}
+                    onChange={handleInputChange}
+                    className="border-2 focus:border-[#003703]"
+                    placeholder="Enter street address"
+                  />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <Label htmlFor="city" className="text-sm font-medium">City</Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      required
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="border-2 focus:border-[#003703]"
+                      placeholder="City"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <Label htmlFor="province" className="text-sm font-medium">Province</Label>
+                    <Input
+                      id="province"
+                      name="province"
+                      required
+                      value={formData.province}
+                      onChange={handleInputChange}
+                      className="border-2 focus:border-[#003703]"
+                      placeholder="Province"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="postalCode" className="text-sm font-medium">Postal Code</Label>
+                    <Input
+                      id="postalCode"
+                      name="postalCode"
+                      required
+                      value={formData.postalCode}
+                      onChange={handleInputChange}
+                      className="border-2 focus:border-[#003703]"
+                      placeholder="A1A 1A1"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                  <Label htmlFor="city" className="text-sm font-medium">City</Label>
-                  <Input
-                    id="city"
-                    name="city"
-                    required
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="border-2 focus:border-[#003703]"
-                    placeholder="City"
-                  />
-                </div>
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                  <Label htmlFor="province" className="text-sm font-medium">Province</Label>
-                  <Input
-                    id="province"
-                    name="province"
-                    required
-                    value={formData.province}
-                    onChange={handleInputChange}
-                    className="border-2 focus:border-[#003703]"
-                    placeholder="Province"
-                  />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="postalCode" className="text-sm font-medium">Postal Code</Label>
-                  <Input
-                    id="postalCode"
-                    name="postalCode"
-                    required
-                    value={formData.postalCode}
-                    onChange={handleInputChange}
-                    className="border-2 focus:border-[#003703]"
-                    placeholder="A1A 1A1"
-                  />
-                </div>
-              </div>
-            </div>
+            )}
 
             {!isOrder && (
               <div className="space-y-4">
