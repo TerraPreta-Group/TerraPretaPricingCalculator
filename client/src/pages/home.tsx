@@ -52,6 +52,7 @@ export default function Home() {
   });
   const [pricePerLb, setPricePerLb] = useState<number>(1.75);
   const [wellsites, setWellsites] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // Added state for loading
 
   const handleAreaChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -129,6 +130,14 @@ export default function Home() {
   const toteBags = calculateToteBags(requiredProduct);
   const deliveryCost = deliveryDistance ? calculateDeliveryCost(parseFloat(deliveryDistance)) : 0;
   const totalCost = pelletsCost + (pickup === "no" ? deliveryCost : 0);
+
+  const handleNextStep = async () => {
+    setIsSubmitting(true);
+    // Simulate a short delay to show loading state
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setIsSubmitting(false);
+  };
+
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#011028] to-black p-4">
@@ -402,20 +411,37 @@ export default function Home() {
           </Table>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link href={`/contact?type=order&product=${requiredProduct}&cost=${totalCost}&acres=${acres.toFixed(2)}`}>
-              <Button variant="outline" className="border-2 border-[#003703] hover:bg-[#003703]/10 text-[#003703] text-lg py-6 px-8 shadow-lg">
-                Next Step
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto border-2 border-[#4d734f] hover:bg-[#4d734f]/10 text-[#4d734f] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg relative"
+                onClick={handleNextStep}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="opacity-0">Next Step</span>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="h-5 w-5 border-2 border-[#4d734f] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  </>
+                ) : (
+                  "Next Step"
+                )}
               </Button>
             </Link>
             <Link href="/contact?type=call">
-              <Button variant="outline" className="border-2 border-[#011028] hover:bg-[#011028]/10 text-[#011028] text-lg py-6 px-8 shadow-lg">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto border-2 border-[#4d734f] hover:bg-[#4d734f]/10 text-[#4d734f] text-lg py-4 sm:py-6 px-6 sm:px-8 shadow-lg"
+              >
                 Questions?
               </Button>
             </Link>
           </div>
 
-          <p className="text-xs text-[#011028]/70 text-center">
+          <p className="text-xs text-[#011028]/70 text-center mt-4 px-4">
             All calculations are automatically converted to acres. Note: 1 hectare is approximately 2.47 acres.
           </p>
 
