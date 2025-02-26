@@ -539,7 +539,9 @@ export default function Home() {
           <Table>
             <TableBody>
               <TableRow className="bg-gray-200 border-2 border-black rounded-lg overflow-hidden">
-                <TableCell className="font-bold text-xl text-center text-[#011028]">Pellets</TableCell>
+                <TableCell className="font-bold text-xl text-center text-[#011028]">
+                  Pellets
+                </TableCell>
                 <TableCell className="text-xl font-bold text-primary text-center pr-8 text-[#011028]">${formatNumber(pelletsCost)}</TableCell>
               </TableRow>
 
